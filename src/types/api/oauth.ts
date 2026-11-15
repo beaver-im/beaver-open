@@ -20,7 +20,7 @@
  */
 
 // OAuth 登录：一级实体，对应服务端 open_oauth 表。
-// 门户路由段仍叫 /open_portal/app/*，但语义已是 OAuth 应用管理，标识统一为 oauthId。
+// 路由段 /developer/app/* 的语义是 OAuth 应用管理，标识统一为 oauthId。
 
 export interface IOAuthAppInfo {
   oauthId: string

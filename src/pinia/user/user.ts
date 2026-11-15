@@ -118,7 +118,7 @@ export const useUserStore = defineStore("useUserStore", {
 
     // 初始化用户信息 - 页面刷新时调用
     async initUserInfo() {
-      // open_portal 登录后已返回完整用户信息，无需额外调用
+      // 开发者控制台登录后已返回完整用户信息，无需额外调用
       // 如果后续需要刷新用户信息，可以添加对应的 API
       if (this.token && !this.nickName) {
         // 如果有 token 但没有昵称，可能需要重新登录

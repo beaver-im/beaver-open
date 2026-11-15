@@ -33,7 +33,7 @@ export interface IUserInfo {
   fileName: string
 }
 
-// 登录响应数据 - 匹配 open_portal API 返回结构
+// 登录响应数据 - 匹配开发者控制台 API 返回结构
 export interface ILoginRes {
   token: string
   userId: string

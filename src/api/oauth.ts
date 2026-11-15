@@ -40,11 +40,11 @@ import type {
   IUpdateOAuthConfigRes
 } from "@/types/api/oauth"
 
-// OAuth 应用管理（服务端 open_portal/api/app.api，操作 open_oauth 表）
+// OAuth 应用管理（服务端 api/portal/app.api，操作 open_oauth 表）
 export function createOAuthAppApi(data: ICreateOAuthAppReq) {
   return ajax<ICreateOAuthAppRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/app/v1/create`,
+    url: `${config.baseAPI}/api/developer/app/v1/create`,
     data
   })
 }
@@ -52,7 +52,7 @@ export function createOAuthAppApi(data: ICreateOAuthAppReq) {
 export function updateOAuthAppApi(data: IUpdateOAuthAppReq) {
   return ajax<IUpdateOAuthAppRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/app/v1/update`,
+    url: `${config.baseAPI}/api/developer/app/v1/update`,
     data
   })
 }
@@ -60,7 +60,7 @@ export function updateOAuthAppApi(data: IUpdateOAuthAppReq) {
 export function deleteOAuthAppApi(data: IDeleteOAuthAppReq) {
   return ajax<IDeleteOAuthAppRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/app/v1/delete`,
+    url: `${config.baseAPI}/api/developer/app/v1/delete`,
     data
   })
 }
@@ -68,7 +68,7 @@ export function deleteOAuthAppApi(data: IDeleteOAuthAppReq) {
 export function getOAuthAppDetailApi(params: IGetOAuthAppDetailReq) {
   return ajax<IGetOAuthAppDetailRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/app/v1/detail`,
+    url: `${config.baseAPI}/api/developer/app/v1/detail`,
     params
   })
 }
@@ -76,7 +76,7 @@ export function getOAuthAppDetailApi(params: IGetOAuthAppDetailReq) {
 export function getOAuthAppListApi(params: IGetOAuthAppListReq) {
   return ajax<IGetOAuthAppListRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/app/v1/list`,
+    url: `${config.baseAPI}/api/developer/app/v1/list`,
     params
   })
 }
@@ -84,16 +84,16 @@ export function getOAuthAppListApi(params: IGetOAuthAppListReq) {
 export function resetOAuthSecretApi(data: IResetOAuthSecretReq) {
   return ajax<IResetOAuthSecretRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/app/v1/reset_secret`,
+    url: `${config.baseAPI}/api/developer/app/v1/reset_secret`,
     data
   })
 }
 
-// OAuth 端配置（服务端 open_portal/api/oauth.api）
+// OAuth 端配置（服务端 api/portal/oauth.api）
 export function getOAuthConfigApi(params: IGetOAuthConfigReq) {
   return ajax<IGetOAuthConfigRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/oauth/v1/config`,
+    url: `${config.baseAPI}/api/developer/oauth/v1/config`,
     params
   })
 }
@@ -101,7 +101,7 @@ export function getOAuthConfigApi(params: IGetOAuthConfigReq) {
 export function updateOAuthConfigApi(data: IUpdateOAuthConfigReq) {
   return ajax<IUpdateOAuthConfigRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/oauth/v1/config_update`,
+    url: `${config.baseAPI}/api/developer/oauth/v1/config_update`,
     data
   })
 }

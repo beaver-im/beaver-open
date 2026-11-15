@@ -27,7 +27,7 @@ import { ajax } from "@/utils/request"
 export const loginApi = (data: ILoginReq) =>{
   return ajax<ILoginRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/auth_public/v1/login`,
+    url: `${config.baseAPI}/api/developer/auth_public/v1/login`,
     data
   })
 }
@@ -36,7 +36,7 @@ export const loginApi = (data: ILoginReq) =>{
 export const oauthLoginApi = (data: { code: string }) => {
   return ajax<ILoginRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/auth_public/v1/oauth_login`,
+    url: `${config.baseAPI}/api/developer/auth_public/v1/oauth_login`,
     data
   })
 }

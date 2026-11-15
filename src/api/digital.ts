@@ -47,11 +47,11 @@ import type {
   IDeleteDigitalMcpRes
 } from "@/types/api/digital"
 
-// 数字伙伴（服务端 open_portal/api/digital.api）
+// 数字伙伴（服务端 api/portal/digital.api）
 export function createDigitalApi(data: ICreateDigitalReq) {
   return ajax<ICreateDigitalRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/create`,
+    url: `${config.baseAPI}/api/developer/digital/v1/create`,
     data
   })
 }
@@ -59,7 +59,7 @@ export function createDigitalApi(data: ICreateDigitalReq) {
 export function listDigitalsApi(params: IListDigitalReq) {
   return ajax<IListDigitalRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/list`,
+    url: `${config.baseAPI}/api/developer/digital/v1/list`,
     params
   })
 }
@@ -67,7 +67,7 @@ export function listDigitalsApi(params: IListDigitalReq) {
 export function getDigitalDetailApi(params: IGetDigitalDetailReq) {
   return ajax<IGetDigitalDetailRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/detail`,
+    url: `${config.baseAPI}/api/developer/digital/v1/detail`,
     params
   })
 }
@@ -75,7 +75,7 @@ export function getDigitalDetailApi(params: IGetDigitalDetailReq) {
 export function updateDigitalApi(data: IUpdateDigitalReq) {
   return ajax<IUpdateDigitalRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/update`,
+    url: `${config.baseAPI}/api/developer/digital/v1/update`,
     data
   })
 }
@@ -83,7 +83,7 @@ export function updateDigitalApi(data: IUpdateDigitalReq) {
 export function resetDigitalSecretApi(data: IResetDigitalSecretReq) {
   return ajax<IResetDigitalSecretRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/reset_secret`,
+    url: `${config.baseAPI}/api/developer/digital/v1/reset_secret`,
     data
   })
 }
@@ -91,7 +91,7 @@ export function resetDigitalSecretApi(data: IResetDigitalSecretReq) {
 export function deleteDigitalApi(data: IDeleteDigitalReq) {
   return ajax<IDeleteDigitalRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/delete`,
+    url: `${config.baseAPI}/api/developer/digital/v1/delete`,
     data
   })
 }
@@ -99,7 +99,7 @@ export function deleteDigitalApi(data: IDeleteDigitalReq) {
 export function setDigitalAdminsApi(data: ISetDigitalMembersReq) {
   return ajax<ISetDigitalMembersRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/admins/set`,
+    url: `${config.baseAPI}/api/developer/digital/v1/admins/set`,
     data
   })
 }
@@ -107,7 +107,7 @@ export function setDigitalAdminsApi(data: ISetDigitalMembersReq) {
 export function setDigitalViewersApi(data: ISetDigitalMembersReq) {
   return ajax<ISetDigitalMembersRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/viewers/set`,
+    url: `${config.baseAPI}/api/developer/digital/v1/viewers/set`,
     data
   })
 }
@@ -115,7 +115,7 @@ export function setDigitalViewersApi(data: ISetDigitalMembersReq) {
 export function getDigitalConfigApi(params: IGetDigitalConfigReq) {
   return ajax<IGetDigitalConfigRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/config/get`,
+    url: `${config.baseAPI}/api/developer/digital/v1/config/get`,
     params
   })
 }
@@ -123,7 +123,7 @@ export function getDigitalConfigApi(params: IGetDigitalConfigReq) {
 export function saveDigitalConfigApi(data: ISaveDigitalConfigReq) {
   return ajax<ISaveDigitalConfigRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/config/save`,
+    url: `${config.baseAPI}/api/developer/digital/v1/config/save`,
     data
   })
 }
@@ -133,14 +133,14 @@ export function saveDigitalConfigApi(data: ISaveDigitalConfigReq) {
 export function listDigitalCatalogApi() {
   return ajax<IListDigitalCatalogRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/tool/catalog`
+    url: `${config.baseAPI}/api/developer/digital/v1/tool/catalog`
   })
 }
 
 export function saveDigitalMcpApi(data: ISaveDigitalMcpReq) {
   return ajax<ISaveDigitalMcpRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/tool/mcp/save`,
+    url: `${config.baseAPI}/api/developer/digital/v1/tool/mcp/save`,
     data
   })
 }
@@ -148,7 +148,7 @@ export function saveDigitalMcpApi(data: ISaveDigitalMcpReq) {
 export function deleteDigitalMcpApi(data: IDeleteDigitalMcpReq) {
   return ajax<IDeleteDigitalMcpRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/digital/v1/tool/mcp/delete`,
+    url: `${config.baseAPI}/api/developer/digital/v1/tool/mcp/delete`,
     data
   })
 }

@@ -48,7 +48,7 @@ import type {
  * 知识源是 open_knowledge_source 表里的后端实体，归某个数字伙伴所有，
  * 只持有 platform 索引集合的引用；在线文档由用户粘贴海狸内部地址导入。
  */
-const sourceBase = `${config.baseAPI}/api/open_portal/digital/v1/knowledge/source`
+const sourceBase = `${config.baseAPI}/api/developer/digital/v1/knowledge/source`
 
 export function listKnowledgeSourceApi(params: IListKnowledgeSourceReq) {
   return ajax<IListKnowledgeSourceRes>({
