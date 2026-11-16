@@ -21,11 +21,12 @@
 
 /**
  * 环境配置
+ * baseAPI 仅网关 origin（不含 team / surface / group / action 等任何路径段），
+ * 各业务接口的完整路径写在自己的 url 里。
  */
 export const config = {
   env: import.meta.env.VITE_API_ENV,
-  baseAPI: import.meta.env.VITE_API_BASE,
-  apiApi: import.meta.env.VITE_API_API,
+  baseAPI: import.meta.env.VITE_API_BASE.replace(/\/+$/, ""),
   oauthBaseUrl: import.meta.env.VITE_OAUTH_BASE_URL,
   oauthRedirectUri: import.meta.env.VITE_OAUTH_REDIRECT_URI,
   openAppId: import.meta.env.VITE_OPEN_OAUTH_ID,

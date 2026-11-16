@@ -38,11 +38,11 @@ import type {
   ISetBotMembersRes
 } from "@/types/api/bot"
 
-// 群通知机器人（服务端 api/portal/bot.api）
+// 群通知机器人（服务端 api/bot_developer.api）
 export function createBotApi(data: ICreateBotReq) {
   return ajax<ICreateBotRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/developer/bot/v1/create`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_create`,
     data
   })
 }
@@ -50,7 +50,7 @@ export function createBotApi(data: ICreateBotReq) {
 export function listBotsApi(params: IListBotReq) {
   return ajax<IListBotRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/developer/bot/v1/list`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_list`,
     params
   })
 }
@@ -58,7 +58,7 @@ export function listBotsApi(params: IListBotReq) {
 export function getBotDetailApi(params: IGetBotDetailReq) {
   return ajax<IGetBotDetailRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/developer/bot/v1/detail`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_detail`,
     params
   })
 }
@@ -66,7 +66,7 @@ export function getBotDetailApi(params: IGetBotDetailReq) {
 export function updateBotApi(data: IUpdateBotReq) {
   return ajax<IUpdateBotRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/developer/bot/v1/update`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_update`,
     data
   })
 }
@@ -74,7 +74,7 @@ export function updateBotApi(data: IUpdateBotReq) {
 export function deleteBotApi(data: IDeleteBotReq) {
   return ajax<IDeleteBotRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/developer/bot/v1/delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_delete`,
     data
   })
 }
@@ -82,7 +82,7 @@ export function deleteBotApi(data: IDeleteBotReq) {
 export function resetBotSecretApi(data: IResetBotSecretReq) {
   return ajax<IResetBotSecretRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/developer/bot/v1/reset_secret`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_reset_secret`,
     data
   })
 }
@@ -90,7 +90,7 @@ export function resetBotSecretApi(data: IResetBotSecretReq) {
 export function setBotAdminsApi(data: ISetBotMembersReq) {
   return ajax<ISetBotMembersRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/developer/bot/v1/admins/set`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_set_admins`,
     data
   })
 }
@@ -98,7 +98,7 @@ export function setBotAdminsApi(data: ISetBotMembersReq) {
 export function setBotViewersApi(data: ISetBotMembersReq) {
   return ajax<ISetBotMembersRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/developer/bot/v1/viewers/set`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_set_viewers`,
     data
   })
 }

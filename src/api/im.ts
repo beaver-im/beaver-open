@@ -18,12 +18,13 @@
  *
  * beaver-open-header-v1
  *
- * IM 侧接口（不是开放平台接口）。
- * 开发者控制台的门户令牌和 IM 用户令牌用同一个 Auth.AccessSecret 签发，
- * 网关 jwtAuth 解析后会注入 Beaver-User-Id，所以这里的请求只要带同一条 Token 即可，
- * 不额外引入一套登录态。
+ * Portal 复用的 IM 能力（用户搜索 / 头像上传 / 图片预览）。
+ * 这些能力属于主站 IM，但浏览器不直连 /beaver/...：
+ * 全部打开放平台 developer 面 /beaver-open/api/open/developer/v1/{action}，
+ * 由 open_api 内部透传/转发到主站 account / asset。
  *
- * 目前只用两处：选择人员的用户搜索、头像上传。
+ * 门户令牌和 IM 用户令牌用同一个 Auth.AccessSecret 签发，上传接口带同一条 Token 即可。
+ * 目前三处：MemberPicker 选人搜索、头像上传、图片预览。
  */
 
 import config from "@/config/env"
@@ -36,7 +37,7 @@ const base = config.baseAPI
 export function searchImUserApi(params: ISearchImUserReq) {
   return ajax<ISearchImUserRes>({
     method: "GET",
-    url: `${base}/api/friend/v1/search`,
+    url: `${base}/beaver-open/api/open/developer/v1/user_search`,
     params
   })
 }
@@ -50,7 +51,7 @@ export async function uploadImageFileApi(file: File): Promise<IUploadFileRes> {
   const form = new FormData()
   form.append("file", file)
   const token = localStorage.getItem("token") || ""
-  const resp = await fetch(`${base}/api/file/v1/upload`, {
+  const resp = await fetch(`${base}/beaver-open/api/open/developer/v1/file_upload`, {
     method: "POST",
     headers: token ? { Token: token } : undefined,
     body: form
@@ -66,5 +67,5 @@ export function resolveImageUrl(raw?: string): string {
   const value = (raw || "").trim()
   if (!value) return ""
   if (/^(https?:)?\/\//i.test(value) || value.startsWith("data:")) return value
-  return `${base}/api/file/preview/${value}`
+  return `${base}/beaver-open/api/open/developer/v1/file_preview?fileKey=${encodeURIComponent(value)}`
 }

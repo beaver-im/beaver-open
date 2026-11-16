@@ -48,12 +48,10 @@ import type {
  * 知识源是 open_knowledge_source 表里的后端实体，归某个数字伙伴所有，
  * 只持有 platform 索引集合的引用；在线文档由用户粘贴海狸内部地址导入。
  */
-const sourceBase = `${config.baseAPI}/api/developer/digital/v1/knowledge/source`
-
 export function listKnowledgeSourceApi(params: IListKnowledgeSourceReq) {
   return ajax<IListKnowledgeSourceRes>({
     method: "GET",
-    url: `${sourceBase}/list`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_list`,
     params
   })
 }
@@ -62,7 +60,7 @@ export function listKnowledgeSourceApi(params: IListKnowledgeSourceReq) {
 export function saveKnowledgeSourceApi(data: ISaveKnowledgeSourceReq) {
   return ajax<ISaveKnowledgeSourceRes>({
     method: "POST",
-    url: `${sourceBase}/save`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_save`,
     data
   })
 }
@@ -70,7 +68,7 @@ export function saveKnowledgeSourceApi(data: ISaveKnowledgeSourceReq) {
 export function deleteKnowledgeSourceApi(data: IDeleteKnowledgeSourceReq) {
   return ajax<{}>({
     method: "POST",
-    url: `${sourceBase}/delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_delete`,
     data
   })
 }
@@ -79,7 +77,7 @@ export function deleteKnowledgeSourceApi(data: IDeleteKnowledgeSourceReq) {
 export function detailKnowledgeSourceApi(params: IDetailKnowledgeSourceReq) {
   return ajax<IDetailKnowledgeSourceRes>({
     method: "GET",
-    url: `${sourceBase}/detail`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_detail`,
     params
   })
 }
@@ -88,7 +86,7 @@ export function detailKnowledgeSourceApi(params: IDetailKnowledgeSourceReq) {
 export function checkKnowledgeSourceDocApi(data: ICheckKnowledgeSourceDocReq) {
   return ajax<ICheckKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${sourceBase}/doc/check`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_check`,
     data
   })
 }
@@ -97,7 +95,7 @@ export function checkKnowledgeSourceDocApi(data: ICheckKnowledgeSourceDocReq) {
 export function uploadKnowledgeSourceDocApi(data: IUploadKnowledgeSourceDocReq) {
   return ajax<IUploadKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${sourceBase}/doc/upload`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_upload`,
     data
   })
 }
@@ -106,7 +104,7 @@ export function uploadKnowledgeSourceDocApi(data: IUploadKnowledgeSourceDocReq) 
 export function listKnowledgeSourceDocApi(params: IListKnowledgeSourceDocReq) {
   return ajax<IListKnowledgeSourceDocRes>({
     method: "GET",
-    url: `${sourceBase}/docs`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_list`,
     params
   })
 }
@@ -115,7 +113,7 @@ export function listKnowledgeSourceDocApi(params: IListKnowledgeSourceDocReq) {
 export function importKnowledgeSourceDocApi(data: IImportKnowledgeSourceDocReq) {
   return ajax<IImportKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${sourceBase}/doc/import`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_import`,
     data
   })
 }
@@ -124,7 +122,7 @@ export function importKnowledgeSourceDocApi(data: IImportKnowledgeSourceDocReq) 
 export function deleteKnowledgeSourceDocApi(data: IDeleteKnowledgeSourceDocReq) {
   return ajax<IDeleteKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${sourceBase}/doc/delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_delete`,
     data
   })
 }
@@ -133,7 +131,7 @@ export function deleteKnowledgeSourceDocApi(data: IDeleteKnowledgeSourceDocReq) 
 export function retrieveKnowledgeSourceApi(data: IRetrieveKnowledgeSourceReq) {
   return ajax<IRetrieveKnowledgeSourceRes>({
     method: "POST",
-    url: `${sourceBase}/retrieve`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_retrieve`,
     data
   })
 }
