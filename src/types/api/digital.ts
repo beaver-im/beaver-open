@@ -20,7 +20,7 @@
  */
 
 // 数字伙伴：一级实体，对应服务端 open_digital 表。
-// AppSecret 明文仅 external 创建或重置时返回一次；详情返回掩码。
+// DigitalSecret 明文仅 external 创建或重置时返回一次；详情返回掩码。
 // 注意：服务端门户未提供数字伙伴删除接口，前端不提供删除操作。
 //
 // 产品口径：编排有三种形态，与后端 runtime oneof 一一对应：
@@ -42,8 +42,8 @@ export interface IDigitalInfo {
   visibility: DigitalVisibility
   /** 1 启用 / 0 停用（服务端 OpenDigital.Status，建表默认 1）。这是启用开关，不是发布状态；服务端目前没有发布流程 */
   status?: number
-  appKey?: string
-  appSecret?: string // 掩码；仅 external 有
+  digitalKey?: string
+  digitalSecret?: string // 掩码；仅 external 有
   adminIds?: string[]
   viewerIds?: string[]
   /** 编排配置里的引用数量，列表卡片直接展示 */
@@ -64,8 +64,8 @@ export interface ICreateDigitalReq {
 }
 export interface ICreateDigitalRes {
   digitalId: string
-  appKey?: string
-  appSecret?: string
+  digitalKey?: string
+  digitalSecret?: string
 }
 
 export interface IListDigitalReq {
@@ -98,8 +98,8 @@ export interface IUpdateDigitalReq {
 }
 export interface IUpdateDigitalRes {
   /** 切换到长链接接入且此前无凭据时，一次性返回明文 */
-  appKey?: string
-  appSecret?: string
+  digitalKey?: string
+  digitalSecret?: string
 }
 
 export interface IDeleteDigitalReq {
@@ -111,7 +111,7 @@ export interface IResetDigitalSecretReq {
   digitalId: string
 }
 export interface IResetDigitalSecretRes {
-  appSecret: string
+  digitalSecret: string
 }
 
 export interface ISetDigitalMembersReq {

@@ -18,10 +18,10 @@
 
   beaver-open-header-v1
 
-  开发者选项：只展示数字伙伴开放能力下的三个值 —— 机器人 ID / AppKey / AppSecret。
+  开发者选项：只展示数字伙伴开放能力下的三个值 —— 机器人 ID / DigitalKey / DigitalSecret。
   机器人 ID 就是 OpenDigital.DigitalID，它本身就是这个数字伙伴的 UserModel.UserID，
   没有独立的 robot_id 列，所以这里直接展示 digitalId。
-  AppSecret 明文只在创建 / 重置时返回一次（credentialFlash），其余时候是掩码。
+  DigitalSecret 明文只在创建 / 重置时返回一次（credentialFlash），其余时候是掩码。
 -->
 
 <template>
@@ -45,27 +45,27 @@
           </el-button>
         </span>
 
-        <span class="ds-summary__key">AppKey</span>
+        <span class="ds-summary__key">DigitalKey</span>
         <span class="ds-summary__val">
-          <code class="ds-mono">{{ appKeyText }}</code>
+          <code class="ds-mono">{{ digitalKeyText }}</code>
           <el-button
-            v-if="appKeyText !== '—'"
+            v-if="digitalKeyText !== '—'"
             link
             type="primary"
-            @click="copyText(appKeyText, 'AppKey 已复制')"
+            @click="copyText(digitalKeyText, 'DigitalKey 已复制')"
           >
             复制
           </el-button>
         </span>
 
-        <span class="ds-summary__key">AppSecret</span>
+        <span class="ds-summary__key">DigitalSecret</span>
         <span class="ds-summary__val">
-          <code class="ds-mono">{{ appSecretText }}</code>
+          <code class="ds-mono">{{ digitalSecretText }}</code>
           <el-button
             v-if="flashVisible"
             link
             type="primary"
-            @click="copyText(appSecretText, 'AppSecret 已复制')"
+            @click="copyText(digitalSecretText, 'DigitalSecret 已复制')"
           >
             复制
           </el-button>
@@ -77,7 +77,7 @@
 
       <template #footer>
         <el-button type="danger" plain :loading="resetting" @click="resetSecret">
-          重置 AppSecret
+          重置 DigitalSecret
         </el-button>
       </template>
     </FormCard>
@@ -99,15 +99,15 @@ const digital = ws.digital
 const resetting = ref(false)
 
 const flashVisible = computed(
-  () => !!credentialFlash.appSecret && credentialFlash.digitalId === digitalId.value
+  () => !!credentialFlash.digitalSecret && credentialFlash.digitalId === digitalId.value
 )
-const appKeyText = computed(() => {
-  if (flashVisible.value && credentialFlash.appKey) return credentialFlash.appKey
-  return digital.value?.appKey || "—"
+const digitalKeyText = computed(() => {
+  if (flashVisible.value && credentialFlash.digitalKey) return credentialFlash.digitalKey
+  return digital.value?.digitalKey || "—"
 })
-const appSecretText = computed(() => {
-  if (flashVisible.value) return credentialFlash.appSecret
-  return digital.value?.appSecret || "—"
+const digitalSecretText = computed(() => {
+  if (flashVisible.value) return credentialFlash.digitalSecret
+  return digital.value?.digitalSecret || "—"
 })
 
 async function copyText(text: string, label = "已复制") {
@@ -145,7 +145,7 @@ function errorMessage(err: unknown, fallback: string): string {
 
 async function resetSecret() {
   try {
-    await ElMessageBox.confirm("旧 AppSecret 立即失效，确认换发？", "重置 AppSecret", {
+    await ElMessageBox.confirm("旧 DigitalSecret 立即失效，确认换发？", "重置 DigitalSecret", {
       type: "warning",
       confirmButtonText: "确认换发",
       cancelButtonText: "取消"
@@ -158,8 +158,8 @@ async function resetSecret() {
     const res = await resetDigitalSecretApi({ digitalId: digitalId.value })
     if (res.code !== 0) throw new Error(res.msg || "重置失败")
     setCredentialFlash(digitalId.value, {
-      appKey: digital.value?.appKey ?? "",
-      appSecret: res.result?.appSecret ?? "",
+      digitalKey: digital.value?.digitalKey ?? "",
+      digitalSecret: res.result?.digitalSecret ?? "",
       reason: "reset"
     })
     ElMessage.success("新密钥已生成")

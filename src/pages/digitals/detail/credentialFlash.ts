@@ -22,36 +22,36 @@
 import { reactive } from "vue"
 
 /**
- * AppSecret 明文只在创建 / 重置时返回一次。
+ * DigitalSecret 明文只在创建 / 重置时返回一次。
  * 创建动作会 router.replace 换路由记录，组件可能重建，所以明文放在模块级，
  * 由「对外」分区消费并在用户确认保存后主动清空。
  */
 export interface CredentialFlash {
   digitalId: string
-  appKey: string
-  appSecret: string
+  digitalKey: string
+  digitalSecret: string
   reason: "create" | "reset"
 }
 
 export const credentialFlash = reactive<CredentialFlash>({
   digitalId: "",
-  appKey: "",
-  appSecret: "",
+  digitalKey: "",
+  digitalSecret: "",
   reason: "create"
 })
 
 export function setCredentialFlash(
   digitalId: string,
-  patch: Partial<Pick<CredentialFlash, "appKey" | "appSecret" | "reason">>
+  patch: Partial<Pick<CredentialFlash, "digitalKey" | "digitalSecret" | "reason">>
 ): void {
   credentialFlash.digitalId = digitalId
-  credentialFlash.appKey = patch.appKey ?? ""
-  credentialFlash.appSecret = patch.appSecret ?? ""
+  credentialFlash.digitalKey = patch.digitalKey ?? ""
+  credentialFlash.digitalSecret = patch.digitalSecret ?? ""
   credentialFlash.reason = patch.reason ?? "create"
 }
 
 export function clearCredentialFlash(): void {
   credentialFlash.digitalId = ""
-  credentialFlash.appKey = ""
-  credentialFlash.appSecret = ""
+  credentialFlash.digitalKey = ""
+  credentialFlash.digitalSecret = ""
 }

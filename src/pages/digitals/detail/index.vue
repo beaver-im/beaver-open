@@ -240,8 +240,8 @@ export default defineComponent({
         await config.save(id, mode.value)
         if (runtime === "external") {
           setCredentialFlash(id, {
-            appKey: res.result?.appKey ?? "",
-            appSecret: res.result?.appSecret ?? "",
+            digitalKey: res.result?.digitalKey ?? "",
+            digitalSecret: res.result?.digitalSecret ?? "",
             reason: "create"
           })
         }
@@ -292,10 +292,10 @@ export default defineComponent({
         // 回读一次确认已落库：不确认就等于「界面切了、数据没切」
         if (mode.value !== next) throw new Error("编排方式未能保存")
         // 切到长链接且此前没有凭据时，服务端补发一把明文，必须当场展示
-        if (res.result?.appSecret) {
+        if (res.result?.digitalSecret) {
           setCredentialFlash(id, {
-            appKey: res.result.appKey ?? "",
-            appSecret: res.result.appSecret,
+            digitalKey: res.result.digitalKey ?? "",
+            digitalSecret: res.result.digitalSecret,
             reason: "create"
           })
           goTab("developer")

@@ -84,7 +84,7 @@ export function getOAuthAppListApi(params: IGetOAuthAppListReq) {
 export function resetOAuthSecretApi(data: IResetOAuthSecretReq) {
   return ajax<IResetOAuthSecretRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/app_reset_secret`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/oauth_reset_secret`,
     data
   })
 }

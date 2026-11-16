@@ -32,7 +32,7 @@ export const loginApi = (data: ILoginReq) =>{
   })
 }
 
-// OAuth 授权码登录（code 由服务端换 token，appSecret 不下发前端）
+// OAuth 授权码登录（code 由服务端换 token，oauthSecret 不下发前端）
 export const oauthLoginApi = (data: { code: string }) => {
   return ajax<ILoginRes>({
     method: "POST",

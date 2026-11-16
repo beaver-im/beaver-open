@@ -52,7 +52,7 @@ export default defineComponent({
     // 授权页地址：与原登录按钮完全一致，只是不再需要用户点一下
     const authUrl = (() => {
       const url = new URL(`${config.oauthBaseUrl}/auth`)
-      url.searchParams.set("appId", config.openAppId)
+      url.searchParams.set("oauthId", config.openOAuthId)
       url.searchParams.set("redirectUri", config.oauthRedirectUri)
       url.searchParams.set("scope", "user_info")
       return url.toString()

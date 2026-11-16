@@ -25,7 +25,7 @@
       <span>
         长链接接入用于对接第三方服务：你自己的服务通过 WebSocket 长连接接入平台，
         平台只负责签发凭据并转发消息，不托管对话逻辑，所以这里没有可配置项。
-        接入所需的 AppKey / AppSecret 与重置，请在「开发者选项」分区查看。
+        接入所需的 DigitalKey / DigitalSecret 与重置，请在「开发者选项」分区查看。
       </span>
     </div>
   </div>
