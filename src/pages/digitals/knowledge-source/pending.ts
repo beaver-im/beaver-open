@@ -19,7 +19,7 @@
  * beaver-open-header-v1
  *
  * 知识源「待添加条目」的共享模型与统一提交流程。
- * /digitals/:digitalId/knowledge/create（创建知识源子路由）与
+ * /robot/digitals/:digitalId/knowledge/create（创建知识源子路由）与
  * 知识源详情里的添加文件向导共用这一份，避免两处各写一遍导入逻辑。
  */
 

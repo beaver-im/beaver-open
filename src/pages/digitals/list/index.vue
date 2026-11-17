@@ -60,12 +60,12 @@
               <h3 class="digital-card__name" :title="item.name">{{ item.name }}</h3>
               <p v-if="item.workId" class="digital-card__workid">工号 {{ item.workId }}</p>
             </div>
-            <!-- status 是服务端的启用开关（1 启用 / 0 停用），不是发布状态：新建默认就是启用中 -->
+            <!-- status：1 已发布 / 2 未发布（草稿）。新建默认未发布，去详情页发布 -->
             <span
               class="ds-badge"
-              :class="item.status === 0 ? 'ds-badge--neutral' : 'ds-badge--success'"
+              :class="isPublished(item.status) ? 'ds-badge--success' : 'ds-badge--neutral'"
             >
-              {{ item.status === 0 ? "已停用" : "启用中" }}
+              {{ isPublished(item.status) ? "已发布" : "未发布" }}
             </span>
           </header>
 
@@ -78,10 +78,6 @@
             <el-icon class="digital-card__go"><Right /></el-icon>
           </footer>
         </article>
-
-        <div v-if="!loading && !list.length" class="digital-empty">
-          <p>{{ emptyText }}</p>
-        </div>
       </div>
     </div>
 
@@ -137,7 +133,7 @@
 </template>
 
 <script lang="ts">
-import { computed, onMounted, reactive, ref, defineComponent } from "vue"
+import { onMounted, reactive, ref, defineComponent } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { Plus, Right } from "@element-plus/icons-vue"
@@ -180,11 +176,10 @@ export default defineComponent({
       }
     }
 
-    const goDetail = (row: IDigitalInfo) => router.push(`/digitals/${row.digitalId}?tab=orchestration`)
+    const goDetail = (row: IDigitalInfo) => router.push(`/robot/digitals/${row.digitalId}?tab=orchestration`)
 
-    const emptyText = computed(() =>
-      loadFailed.value ? "加载失败，请重新进入本页" : "还没有智能体，先创建一个"
-    )
+    /** 发布状态：1 已发布 / 2 未发布。未发布是草稿，只有创建者与管理员可见 */
+    const isPublished = (status?: number) => status === 1
 
     /* ============ 创建弹窗 ============
      * 弹窗里填完基础信息直接落库（一步创建），不再进「草稿态工作台」。
@@ -225,7 +220,7 @@ export default defineComponent({
         if (!id) throw new Error("创建失败：未返回 digitalId")
         dialogVisible.value = false
         ElMessage.success("智能体已保存")
-        router.push(`/digitals/${id}?tab=orchestration`)
+        router.push(`/robot/digitals/${id}?tab=orchestration`)
       } catch (err) {
         ElMessage.error(errorMessage(err, "保存失败"))
       } finally {
@@ -236,8 +231,8 @@ export default defineComponent({
     onMounted(loadList)
     return {
       errorMessage, router, loading, loadFailed, list, total, page, pageSize, loadList,
-      goDetail, emptyText, dialogVisible, submitting, createForm, openCreate, submitCreate,
-      computed, onMounted, reactive, ref, useRouter, ElMessage, Plus, Right, createDigitalApi,
+      goDetail, isPublished, dialogVisible, submitting, createForm, openCreate, submitCreate,
+      onMounted, reactive, ref, useRouter, ElMessage, Plus, Right, createDigitalApi,
       listDigitalsApi, iconColorFor, iconLetter, iconTint
     }
   }
@@ -399,16 +394,6 @@ export default defineComponent({
     font-size: var(--ds-fs-12);
     color: var(--ds-neutral-500);
   }
-}
-
-.digital-empty {
-  grid-column: 1 / -1;
-  padding: var(--ds-space-12) 0;
-  text-align: center;
-  color: var(--ds-neutral-600);
-  font-size: var(--ds-fs-14);
-
-  p { margin-bottom: var(--ds-space-4); }
 }
 
 @media (max-width: 767px) {

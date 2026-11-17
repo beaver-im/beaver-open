@@ -73,7 +73,7 @@ export function deleteKnowledgeSourceApi(data: IDeleteKnowledgeSourceReq) {
   })
 }
 
-/** 单个知识源详情：进入 /digitals/:digitalId/knowledge/:knowledgeSourceId 子路由时按 id 取回实体 */
+/** 单个知识源详情：进入 /robot/digitals/:digitalId/knowledge/:knowledgeSourceId 子路由时按 id 取回实体 */
 export function detailKnowledgeSourceApi(params: IDetailKnowledgeSourceReq) {
   return ajax<IDetailKnowledgeSourceRes>({
     method: "GET",

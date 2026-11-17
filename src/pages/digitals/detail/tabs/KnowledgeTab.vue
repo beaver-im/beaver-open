@@ -20,8 +20,8 @@
 
   知识源分区（列表）：知识源 ≠ 知识库。
   知识源是 open_knowledge_source 表里的后端一等实体，归当前数字伙伴所有，只持有 platform 索引集合的引用。
-  - 点「创建知识源」进入独立子路由 /digitals/:digitalId/knowledge/create（先选数据源再落库，不在列表页弹输入框）；
-  - 点卡片进入 /digitals/:digitalId/knowledge/:knowledgeSourceId。
+  - 点「创建知识源」进入独立子路由 /robot/digitals/:digitalId/knowledge/create（先选数据源再落库，不在列表页弹输入框）；
+  - 点卡片进入 /robot/digitals/:digitalId/knowledge/:knowledgeSourceId。
   本组件只负责列表与入口。
 -->
 

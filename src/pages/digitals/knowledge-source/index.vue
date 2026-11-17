@@ -18,7 +18,7 @@
 
   beaver-open-header-v1
 
-  知识源子路由页：/digitals/:digitalId/knowledge/:knowledgeSourceId
+  知识源子路由页：/robot/digitals/:digitalId/knowledge/:knowledgeSourceId
   - 进入时按 id 从后端取回知识源实体（详情接口），不再依赖列表页传参；
   - ?add=1（刚创建完空知识源）先展示「选择数据源」添加文件向导；
   - 向导之外由 KsDetailView 承载「文档 / 召回测试 / 设置」三分区；

@@ -318,7 +318,7 @@ async function removeDigital() {
     const res = await deleteDigitalApi({ digitalId: digitalId.value })
     if (res.code !== 0) throw new Error(res.msg || "删除失败")
     ElMessage.success("已删除")
-    router.push("/digitals")
+    router.push("/robot/digitals")
   } catch (err) {
     ElMessage.error(errorMessage(err, "删除失败"))
   } finally {

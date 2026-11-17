@@ -86,7 +86,7 @@ const select = (key: string) => {
   router.replace({ query: { ...route.query, tab: key } })
 }
 
-const goList = () => router.push("/bots")
+const goList = () => router.push("/robot/bots")
 
 function errorMessage(err: unknown, fallback: string): string {
   if (err instanceof Error && err.message) return err.message

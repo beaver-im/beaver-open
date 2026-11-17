@@ -24,13 +24,14 @@ import { useUserStore } from "@/pinia/user/user"
 
 /**
  * 路由按业务板块划分，不再把所有东西塞进同一个旧版控制台壳：
- * - /oauth      身份与接入（OAuth 登录）
- * - /bots       机器人能力（推送机器人）
- * - /digitals   机器人能力（智能体）
- * 三块都是一级路径，共享同一个 layout 壳；每块在 src/pages 下有独立目录，
- * 目录内部再按「列表 / 创建 / 详情 / 分区」拆分，整目录可独立拆成应用。
- * 智能体详情里的「知识源」是数字伙伴的子实体，挂在 /digitals/:digitalId 下，
+ * - /oauth                身份与接入（OAuth 登录）
+ * - /robot/bots           机器人（推送机器人）
+ * - /robot/digitals       机器人（智能体）
+ * 「机器人」是一级板块，推送机器人与智能体是它下面的两个模块，路径也按这个层级走；
+ * 智能体详情里的「知识源」是数字伙伴的子实体，挂在 /robot/digitals/:digitalId 下，
  * 不是一级路由。
+ * 所有页面共享同一个 layout 壳；每块在 src/pages 下有独立目录，
+ * 目录内部再按「列表 / 创建 / 详情 / 分区」拆分，整目录可独立拆成应用。
  * /dashboard 是控制台首页，/login、/redirect、/error/404 属于 pages/common 特殊页。
  *
  * meta.modulePath 供侧栏在三级路径下仍高亮二级菜单，也供面包屑回列表。
@@ -105,9 +106,11 @@ const router = createRouter({
           }
         },
 
-        // ② 机器人能力 / 推送机器人
+        // ② 机器人 / 推送机器人与智能体
+        // 「机器人」本身不是一个页面，只是板块层级：直接进来落到第一个模块。
+        { path: "/robot", redirect: "/robot/bots" },
         {
-          path: "/bots",
+          path: "/robot/bots",
           name: "Bots",
           component: () => import("@/pages/bots/list/index.vue"),
           meta: {
@@ -115,11 +118,11 @@ const router = createRouter({
             requiresAuth: true,
             group: "机器人能力",
             module: "推送机器人",
-            modulePath: "/bots"
+            modulePath: "/robot/bots"
           }
         },
         {
-          path: "/bots/:botId",
+          path: "/robot/bots/:botId",
           name: "BotsDetail",
           component: () => import("@/pages/bots/detail/index.vue"),
           meta: {
@@ -127,14 +130,14 @@ const router = createRouter({
             requiresAuth: true,
             group: "机器人能力",
             module: "推送机器人",
-            modulePath: "/bots",
+            modulePath: "/robot/bots",
             page: "机器人详情"
           }
         },
 
-        // ③ 机器人能力 / 智能体
+        // ③ 机器人 / 智能体
         {
-          path: "/digitals",
+          path: "/robot/digitals",
           name: "Digitals",
           component: () => import("@/pages/digitals/list/index.vue"),
           meta: {
@@ -142,13 +145,13 @@ const router = createRouter({
             requiresAuth: true,
             group: "机器人能力",
             module: "智能体",
-            modulePath: "/digitals"
+            modulePath: "/robot/digitals"
           }
         },
         // 创建与修改共用一个工作台：create 是草稿态，:digitalId 是实体态。
         // 草稿态填完任一分区点保存即先落库，再原地 replace 到真实 ID。
         {
-          path: "/digitals/create",
+          path: "/robot/digitals/create",
           name: "DigitalsCreate",
           component: () => import("@/pages/digitals/detail/index.vue"),
           meta: {
@@ -156,7 +159,7 @@ const router = createRouter({
             requiresAuth: true,
             group: "机器人能力",
             module: "智能体",
-            modulePath: "/digitals",
+            modulePath: "/robot/digitals",
             page: "新建智能体",
             isNew: true
           }
@@ -164,7 +167,7 @@ const router = createRouter({
         // 创建知识源：点「创建知识源」直接进这个子路由（先选数据源，再落库），
         // 不再在列表页弹输入框。必须排在 :knowledgeSourceId 之前，否则 create 会被当成 id。
         {
-          path: "/digitals/:digitalId/knowledge/create",
+          path: "/robot/digitals/:digitalId/knowledge/create",
           name: "DigitalKnowledgeSourceCreate",
           component: () => import("@/pages/digitals/knowledge-source/create.vue"),
           meta: {
@@ -172,7 +175,7 @@ const router = createRouter({
             requiresAuth: true,
             group: "机器人能力",
             module: "智能体",
-            modulePath: "/digitals",
+            modulePath: "/robot/digitals",
             page: "创建知识源",
             isNew: true
           }
@@ -180,7 +183,7 @@ const router = createRouter({
         // 知识源是智能体下的子实体，独立成一级子路由（不再是详情 tab 的内部视图）。
         // ?add=1 表示刚创建完空知识源，进来先走「选择数据源」向导。
         {
-          path: "/digitals/:digitalId/knowledge/:knowledgeSourceId",
+          path: "/robot/digitals/:digitalId/knowledge/:knowledgeSourceId",
           name: "DigitalKnowledgeSourceDetail",
           component: () => import("@/pages/digitals/knowledge-source/index.vue"),
           meta: {
@@ -188,12 +191,12 @@ const router = createRouter({
             requiresAuth: true,
             group: "机器人能力",
             module: "智能体",
-            modulePath: "/digitals",
+            modulePath: "/robot/digitals",
             page: "知识源"
           }
         },
         {
-          path: "/digitals/:digitalId",
+          path: "/robot/digitals/:digitalId",
           name: "DigitalsDetail",
           component: () => import("@/pages/digitals/detail/index.vue"),
           meta: {
@@ -201,7 +204,7 @@ const router = createRouter({
             requiresAuth: true,
             group: "机器人能力",
             module: "智能体",
-            modulePath: "/digitals",
+            modulePath: "/robot/digitals",
             page: "智能体详情"
           }
         }

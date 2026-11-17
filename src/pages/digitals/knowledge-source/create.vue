@@ -18,7 +18,7 @@
 
   beaver-open-header-v1
 
-  创建知识源子路由页：/digitals/:digitalId/knowledge/create
+  创建知识源子路由页：/robot/digitals/:digitalId/knowledge/create
   - 在「知识源」分区点「创建知识源」直接进这一页，不再先弹输入框；
   - 顶部「选择数据源」提供一个「创建一个空的知识源」入口（立即落库并进入知识源）；
   - 下面「上传文件」：海狸在线文档 / Q&A 文档 / 本地上传，选完点「创建知识源」一并落库并导入；

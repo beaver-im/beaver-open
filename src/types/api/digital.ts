@@ -40,7 +40,7 @@ export interface IDigitalInfo {
   description: string
   runtime: DigitalRuntime
   visibility: DigitalVisibility
-  /** 1 启用 / 0 停用（服务端 OpenDigital.Status，建表默认 1）。这是启用开关，不是发布状态；服务端目前没有发布流程 */
+  /** 发布状态：1 已发布 / 2 未发布（服务端 OpenDigital.Status，新建默认 2）。未发布会挡住外接换票与按 ID 取身份 */
   status?: number
   digitalKey?: string
   digitalSecret?: string // 掩码；仅 external 有
@@ -119,6 +119,15 @@ export interface ISetDigitalMembersReq {
   userIds: string[]
 }
 export interface ISetDigitalMembersRes {}
+
+/** 发布状态：1 已发布 / 2 未发布（草稿，只有创建者与管理员可见） */
+export interface ISetDigitalStatusReq {
+  digitalId: string
+  status: number
+}
+export interface ISetDigitalStatusRes {
+  status: number
+}
 
 // 编排配置：按 runtime 三选一，字段为 JSON 字符串。
 // 服务端 save 每次只认当前 runtime 对应那一列，所以各分区保存都必须提交整份配置。

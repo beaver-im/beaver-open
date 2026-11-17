@@ -43,6 +43,16 @@
           <span class="ws-draft-tag">草稿 · 未创建</span>
           <el-button type="primary" :loading="creating" @click="createNow">创建智能体</el-button>
         </div>
+        <!-- 实体态：发布状态 + 发布/取消发布。未发布是草稿，只有创建者与管理员可见 -->
+        <div v-else class="ws-head__actions">
+          <span
+            class="ds-badge"
+            :class="published ? 'ds-badge--success' : 'ds-badge--neutral'"
+          >{{ published ? "已发布" : "未发布" }}</span>
+          <el-button :loading="statusSaving" @click="togglePublish">
+            {{ published ? "取消发布" : "发布" }}
+          </el-button>
+        </div>
       </div>
     </header>
 
@@ -70,7 +80,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, watch, de
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { ArrowLeft } from "@element-plus/icons-vue"
-import { createDigitalApi, getDigitalDetailApi, updateDigitalApi } from "@/api/digital"
+import { createDigitalApi, getDigitalDetailApi, setDigitalStatusApi, updateDigitalApi } from "@/api/digital"
 import type { IDigitalInfo } from "@/types/api/digital"
 import TabNav from "@/pages/digitals/components/TabNav.vue"
 import { modeText } from "@/pages/digitals/detail/constants"
@@ -121,7 +131,7 @@ export default defineComponent({
 
     /**
      * 创建与修改是同一个工作台：
-     * /digitals/create 是草稿态，:digitalId 是实体态，共用本组件、同一组分区与同一份表单。
+     * /robot/digitals/create 是草稿态，:digitalId 是实体态，共用本组件、同一组分区与同一份表单。
      * 草稿态下任意分区点保存（或顶部「创建智能体」）都会先把实体落库，再保存当前配置，
      * 之后原地 replace 到真实 ID，用户不会跳到另一个界面。
      */
@@ -174,10 +184,32 @@ export default defineComponent({
       if (autosaveTimer) clearTimeout(autosaveTimer)
     })
 
-    const goList = () => router.push("/digitals")
+    const goList = () => router.push("/robot/digitals")
     const goTab = (key: string) => {
       if (key === active.value) return
       router.replace({ query: { ...route.query, tab: key } })
+    }
+
+    /* ============ 发布 / 取消发布 ============
+     * status：1 已发布 / 2 未发布。新建智能体默认未发布（草稿），
+     * 编排配好后再由用户手动发布；未发布时外接侧换不到 token、按 ID 也取不到身份。
+     */
+    const published = computed(() => digital.value?.status === 1)
+    const statusSaving = ref(false)
+    const togglePublish = async () => {
+      const id = digitalId.value
+      if (!id) return
+      const next = published.value ? 2 : 1
+      statusSaving.value = true
+      try {
+        await setDigitalStatusApi({ digitalId: id, status: next })
+        if (digital.value) digital.value.status = next
+        ElMessage.success(next === 1 ? "已发布" : "已取消发布")
+      } catch (err) {
+        ElMessage.error(errorMessage(err, "操作失败"))
+      } finally {
+        statusSaving.value = false
+      }
     }
 
     const loadDetail = async (id: string) => {
@@ -245,7 +277,7 @@ export default defineComponent({
             reason: "create"
           })
         }
-        await router.replace({ path: `/digitals/${id}`, query: { ...route.query, tab: active.value } })
+        await router.replace({ path: `/robot/digitals/${id}`, query: { ...route.query, tab: active.value } })
         ElMessage.success("智能体已创建")
         return id
       } catch (err) {
@@ -366,6 +398,7 @@ export default defineComponent({
       draft, config, creating, loadFailed, tabs, active, select, mode, disabledTabs,
       ready, goList, goTab, loadDetail, refresh,
       ensureCreated, saveConfig, createNow, switchMode, syncFromRoute, computed, onMounted,
+      published, statusSaving, togglePublish, setDigitalStatusApi,
       onBeforeUnmount, nextTick, provide, ref, watch, useRoute, useRouter, ElMessage, ArrowLeft,
       createDigitalApi, getDigitalDetailApi, updateDigitalApi, TabNav, modeText, credentialFlash,
       setCredentialFlash, digitalConfig, digitalDraft, digitalWorkspaceKey, modeToRuntime,

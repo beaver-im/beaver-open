@@ -74,10 +74,6 @@
             <el-icon class="bot-card__go"><Right /></el-icon>
           </footer>
         </article>
-
-        <div v-if="!loading && !list.length" class="bot-empty">
-          <p>{{ emptyText }}</p>
-        </div>
       </div>
     </div>
 
@@ -130,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue"
+import { onMounted, reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { Plus, Right } from "@element-plus/icons-vue"
@@ -182,10 +178,7 @@ const loadList = async () => {
   }
 }
 
-const goDetail = (item: IBotInfo) => router.push(`/bots/${item.botId}?tab=settings`)
-const emptyText = computed(() =>
-  loadFailed.value ? "加载失败，请重新进入本页" : "还没有推送机器人"
-)
+const goDetail = (item: IBotInfo) => router.push(`/robot/bots/${item.botId}?tab=settings`)
 
 const dialogVisible = ref(false)
 const submitting = ref(false)
@@ -223,7 +216,7 @@ async function submitCreate() {
       secret: res.result?.secret ?? ""
     })
     dialogVisible.value = false
-    router.push(`/bots/${botId}?tab=developer`)
+    router.push(`/robot/bots/${botId}?tab=developer`)
   } catch (err) {
     ElMessage.error(errorMessage(err, "创建失败"))
   } finally {
@@ -388,14 +381,6 @@ onMounted(loadList)
       opacity 0.2s,
       transform 0.2s;
   }
-}
-
-.bot-empty {
-  grid-column: 1 / -1;
-  padding: var(--ds-space-12) 0;
-  text-align: center;
-  color: var(--ds-neutral-600);
-  font-size: var(--ds-fs-14);
 }
 
 @media (max-width: 767px) {

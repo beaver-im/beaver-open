@@ -34,6 +34,8 @@ import type {
   IResetDigitalSecretRes,
   ISetDigitalMembersReq,
   ISetDigitalMembersRes,
+  ISetDigitalStatusReq,
+  ISetDigitalStatusRes,
   IGetDigitalConfigReq,
   IGetDigitalConfigRes,
   ISaveDigitalConfigReq,
@@ -108,6 +110,15 @@ export function setDigitalViewersApi(data: ISetDigitalMembersReq) {
   return ajax<ISetDigitalMembersRes>({
     method: "POST",
     url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_set_viewers`,
+    data
+  })
+}
+
+/** 发布 / 取消发布：status 1 已发布 2 未发布 */
+export function setDigitalStatusApi(data: ISetDigitalStatusReq) {
+  return ajax<ISetDigitalStatusRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_set_status`,
     data
   })
 }

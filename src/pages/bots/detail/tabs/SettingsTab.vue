@@ -279,7 +279,7 @@ async function removeBot() {
     const res = await deleteBotApi({ botId: props.bot.botId })
     if (res.code !== 0) throw new Error(res.msg || "删除失败")
     ElMessage.success("已删除")
-    router.push("/bots")
+    router.push("/robot/bots")
   } catch (err) {
     ElMessage.error(errorMessage(err, "删除失败"))
   } finally {

@@ -42,9 +42,9 @@ export const dashboardMenu: MenuItem = {
   icon: HouseIcon
 }
 
-// 一级 = 能力分组，二级 = 独立模块；每块都占一个一级路由前缀。
-// 三块业务能力 = OAuth 登录(/oauth) / 推送机器人(/bots) / 智能体(/digitals)，
-// 各自对应 src/pages 下的独立目录，整目录可拆成独立应用。
+// 一级 = 业务板块，二级 = 板块下的独立模块，路径层级与菜单层级一致。
+// 身份与接入 = OAuth 登录(/oauth)；机器人 = 推送机器人(/robot/bots) + 智能体(/robot/digitals)。
+// 两个模块在 src/pages 下各有独立目录，整目录可拆成独立应用。
 // 智能体详情里的「知识源」是数字伙伴的子实体（open_knowledge_source 表），
 // 不是一级路由，因此没有独立菜单项。
 // agent 是独立运行时（app/agent、platform/agent_apps），门户只通过数字伙伴编排配置引用它，
@@ -59,8 +59,8 @@ export const menuGroups: MenuGroup[] = [
     title: "机器人能力",
     icon: ChatIcon,
     items: [
-      { path: "/bots", title: "推送机器人" },
-      { path: "/digitals", title: "智能体" }
+      { path: "/robot/bots", title: "推送机器人" },
+      { path: "/robot/digitals", title: "智能体" }
     ]
   }
 ]
