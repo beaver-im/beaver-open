@@ -35,8 +35,6 @@ export interface IDigitalInfo {
   digitalId: string
   name: string
   avatar?: string
-  /** 工号：数字伙伴在组织里的成员工号，空=未申请。 */
-  workId?: string
   description: string
   runtime: DigitalRuntime
   visibility: DigitalVisibility
@@ -58,7 +56,6 @@ export interface ICreateDigitalReq {
   name: string
   description?: string
   avatar?: string
-  workId?: string
   runtime: DigitalRuntime
   visibility?: DigitalVisibility
 }
@@ -88,9 +85,6 @@ export interface IUpdateDigitalReq {
   digitalId: string
   name?: string
   avatar?: string
-  workId?: string
-  /** 申请平台分配工号（已有工号时服务端忽略） */
-  applyWorkId?: boolean
   description?: string
   visibility?: DigitalVisibility
   /** 编排方式可随时切换；切换会保留旧配置不删 */

@@ -18,7 +18,7 @@
 
   beaver-open-header-v1
 
-  设置分区：图标 & 名称 / 描述 / 工号 / 管理员 / 可见范围 / 已选人员。
+  设置分区：图标 & 名称 / 描述 / 工号（即 user_id，只读） / 管理员 / 可见范围 / 已选人员。
   - 头像是一个 file input：点一下选图，上传后把 URL 写进 draft.avatar，随「保存」一起提交；
   - 可见范围改成下拉框（非公开 / 公开 / 部分公开），下面跟一行当前口径说明；
   - 「已选人员」对应 viewerIds，点「添加」打开选择人员面板，只在「部分公开」时可添加。
@@ -26,7 +26,7 @@
 
 <template>
   <div v-if="isNew" class="ds-notice ds-notice--brand">
-    <span>智能体还没有创建。回到列表用「创建智能体」保存后，这里才能配置工号、管理员与可见范围。</span>
+    <span>智能体还没有创建。回到列表用「创建智能体」保存后，这里才能配置管理员与可见范围。</span>
   </div>
 
   <FormCard v-else title="基本信息">
@@ -77,12 +77,8 @@
 
       <el-form-item label="工号">
         <div class="workid">
-          <span class="workid__value" :class="{ 'is-empty': !draft.workId }">
-            {{ draft.workId || "未申请" }}
-          </span>
-          <el-button :loading="applying" :disabled="!!digital?.workId" @click="applyWorkId">
-            {{ digital?.workId ? "已分配" : "申请独立工号" }}
-          </el-button>
+          <span class="workid__value">{{ digitalId }}</span>
+          <span class="workid__hint">工号即数字伙伴的 user_id，可用于加好友搜索</span>
         </div>
       </el-form-item>
 
@@ -172,7 +168,6 @@ const { isNew, draft, digital, digitalId } = ws
 const router = useRouter()
 
 const saving = ref(false)
-const applying = ref(false)
 const deleting = ref(false)
 const uploadingAvatar = ref(false)
 const avatarInputRef = ref<HTMLInputElement>()
@@ -240,27 +235,10 @@ function onMembersPicked(ids: string[]) {
   viewers.value = ids
 }
 
-/** 申请平台分配工号：服务端生成编号，全局唯一；工号不接受手填。 */
-async function applyWorkId() {
-  if (!digitalId.value) return
-  applying.value = true
-  try {
-    const res = await updateDigitalApi({ digitalId: digitalId.value, applyWorkId: true })
-    if (res.code !== 0) throw new Error(res.msg || "申请失败")
-    ElMessage.success("工号已分配")
-    await ws.refresh()
-    draft.workId = digital.value?.workId || ""
-  } catch (err) {
-    ElMessage.error(errorMessage(err, "申请工号失败"))
-  } finally {
-    applying.value = false
-  }
-}
-
 /**
  * 一次保存：基础信息 + 可见人 + 管理员。
  * 三个接口分开调（服务端就是这样拆的），任一失败即中止并提示，避免半保存。
- * 工号只由「申请独立工号」写入，这里不回传，避免只读值被当表单覆盖。
+ * 工号 = 数字伙伴 user_id，由服务端创建时分配，只读不回传。
  */
 async function saveAll() {
   const name = draft.name.trim()
@@ -396,8 +374,11 @@ async function removeDigital() {
     font-family: ui-monospace, "Cascadia Code", monospace;
     font-size: var(--ds-fs-14);
     color: var(--ds-neutral-900);
+  }
 
-    &.is-empty { color: var(--ds-neutral-600); font-family: inherit; }
+  &__hint {
+    font-size: var(--ds-fs-12);
+    color: var(--ds-neutral-500);
   }
 }
 

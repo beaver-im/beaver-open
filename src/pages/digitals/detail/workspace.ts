@@ -76,7 +76,6 @@ export interface DigitalDraft {
   name: string
   description: string
   avatar: string
-  workId: string
   visibility: DigitalVisibility
   mode: DigitalMode
 }
@@ -182,7 +181,6 @@ export function newDraft(): DigitalDraft {
     name: "",
     description: "",
     avatar: "",
-    workId: "",
     visibility: "private",
     mode: "prompt"
   }

@@ -44,6 +44,13 @@
 
     <PromptEditor v-if="localMode === 'prompt'" />
     <LongConnectionEditor v-else-if="localMode === 'longconnect'" />
+
+    <!-- 编排分区的保存入口：改动只在点击「保存」后落库，不再随输入静默提交。
+         草稿态由顶部「创建智能体」统一创建+保存，这里不重复暴露按钮。 -->
+    <div v-if="!isNew && localMode === 'prompt'" class="orch-save">
+      <span class="orch-save__hint">改动在点击保存后生效</span>
+      <el-button type="primary" :loading="saving" @click="onSave">保存编排</el-button>
+    </div>
   </div>
 </template>
 
@@ -87,8 +94,14 @@ export default defineComponent({
         switching.value = false
       }
     }
+
+    const isNew = ws.isNew
+    // config.saving 是 Ref，模板里需要解包后的布尔值
+    const saving = ws.config.saving
+    const onSave = async () => { await ws.saveConfig() }
     return {
-      ws, switching, MODE_OPTIONS, localMode, currentDesc, onModeChange, computed, ref, watch,
+      ws, switching, MODE_OPTIONS, localMode, currentDesc, onModeChange, isNew, saving, onSave,
+      computed, ref, watch,
       useDigitalWorkspace, PromptEditor, LongConnectionEditor
     }
   }
@@ -130,6 +143,22 @@ export default defineComponent({
     font-size: var(--ds-fs-13);
     line-height: var(--ds-lh-body);
     color: var(--ds-neutral-600);
+  }
+}
+
+.orch-save {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-3) var(--ds-space-5);
+  background: var(--ds-neutral-0);
+  border: 1px solid var(--ds-border-light);
+  border-radius: var(--ds-radius-md);
+
+  &__hint {
+    font-size: var(--ds-fs-12);
+    color: var(--ds-neutral-500);
   }
 }
 </style>
