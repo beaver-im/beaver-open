@@ -36,6 +36,8 @@ import type {
   ISetDigitalMembersRes,
   ISetDigitalStatusReq,
   ISetDigitalStatusRes,
+  IApplyWorkIdReq,
+  IApplyWorkIdRes,
   IGetDigitalConfigReq,
   IGetDigitalConfigRes,
   ISaveDigitalConfigReq,
@@ -119,6 +121,15 @@ export function setDigitalStatusApi(data: ISetDigitalStatusReq) {
   return ajax<ISetDigitalStatusRes>({
     method: "POST",
     url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_set_status`,
+    data
+  })
+}
+
+/** 手动申请工号（创建 IM 用户，幂等） */
+export function applyWorkIdApi(data: IApplyWorkIdReq) {
+  return ajax<IApplyWorkIdRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_work_id_apply`,
     data
   })
 }

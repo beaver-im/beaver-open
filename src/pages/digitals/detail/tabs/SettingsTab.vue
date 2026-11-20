@@ -18,7 +18,7 @@
 
   beaver-open-header-v1
 
-  设置分区：图标 & 名称 / 描述 / 工号（即 user_id，只读） / 管理员 / 可见范围 / 已选人员。
+  设置分区：图标 & 名称 / 描述 / 工号（IM user_id，手动申请，只读） / 管理员 / 可见范围 / 已选人员。
   - 头像是一个 file input：点一下选图，上传后把 URL 写进 draft.avatar，随「保存」一起提交；
   - 可见范围改成下拉框（非公开 / 公开 / 部分公开），下面跟一行当前口径说明；
   - 「已选人员」对应 viewerIds，点「添加」打开选择人员面板，只在「部分公开」时可添加。
@@ -77,8 +77,22 @@
 
       <el-form-item label="工号">
         <div class="workid">
-          <span class="workid__value">{{ digitalId }}</span>
-          <span class="workid__hint">工号即数字伙伴的 user_id，可用于加好友搜索</span>
+          <template v-if="workId">
+            <span class="workid__value">{{ workId }}</span>
+            <span class="workid__hint">工号即数字伙伴的 user_id，可用于加好友搜索</span>
+          </template>
+          <template v-else>
+            <span class="workid__empty">未申请</span>
+            <span class="workid__hint">申请后成为 IM 数字伙伴，可被搜索、加好友、入群对话</span>
+            <el-button
+              type="primary"
+              size="small"
+              :loading="applyingWorkId"
+              @click="onApplyWorkId"
+            >
+              申请工号
+            </el-button>
+          </template>
         </div>
       </el-form-item>
 
@@ -152,6 +166,7 @@ import { useRouter } from "vue-router"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { Camera, Loading, Plus } from "@element-plus/icons-vue"
 import {
+  applyWorkIdApi,
   deleteDigitalApi,
   setDigitalAdminsApi,
   setDigitalViewersApi,
@@ -169,6 +184,7 @@ const router = useRouter()
 
 const saving = ref(false)
 const deleting = ref(false)
+const applyingWorkId = ref(false)
 const uploadingAvatar = ref(false)
 const avatarInputRef = ref<HTMLInputElement>()
 const memberPickerVisible = ref(false)
@@ -186,6 +202,24 @@ const VISIBILITY_CHOICES = [
 const visibilityDesc = computed(
   () => VISIBILITY_CHOICES.find(item => item.value === draft.visibility)?.desc ?? ""
 )
+
+/** 工号 = IM user_id，未申请时为空。digitalId 是平台 UUID，不再当工号展示。 */
+const workId = computed(() => digital.value?.userId ?? "")
+
+async function onApplyWorkId() {
+  if (applyingWorkId.value) return
+  applyingWorkId.value = true
+  try {
+    const res = await applyWorkIdApi({ digitalId: digitalId.value })
+    if (res.code !== 0) throw new Error(res.msg || "申请失败")
+    ElMessage.success(`工号已申请：${res.result?.userId ?? ""}`)
+    await ws.refresh()
+  } catch (err) {
+    ElMessage.error(errorMessage(err, "申请工号失败"))
+  } finally {
+    applyingWorkId.value = false
+  }
+}
 
 function errorMessage(err: unknown, fallback: string): string {
   if (err instanceof Error && err.message) return err.message
@@ -238,7 +272,7 @@ function onMembersPicked(ids: string[]) {
 /**
  * 一次保存：基础信息 + 可见人 + 管理员。
  * 三个接口分开调（服务端就是这样拆的），任一失败即中止并提示，避免半保存。
- * 工号 = 数字伙伴 user_id，由服务端创建时分配，只读不回传。
+ * 工号（IM user_id）由用户在上方手动「申请工号」生成，不随这里保存；digitalId 是平台 UUID。
  */
 async function saveAll() {
   const name = draft.name.trim()
@@ -374,6 +408,19 @@ async function removeDigital() {
     font-family: ui-monospace, "Cascadia Code", monospace;
     font-size: var(--ds-fs-14);
     color: var(--ds-neutral-900);
+  }
+
+  &__empty {
+    min-width: 180px;
+    padding: 0 12px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--ds-radius-md);
+    border: 1px dashed var(--ds-border);
+    background: var(--ds-neutral-50);
+    font-size: var(--ds-fs-13);
+    color: var(--ds-neutral-500);
   }
 
   &__hint {

@@ -58,7 +58,7 @@
             </div>
             <div class="digital-card__heading">
               <h3 class="digital-card__name" :title="item.name">{{ item.name }}</h3>
-              <p class="digital-card__workid">工号 {{ item.digitalId }}</p>
+              <p class="digital-card__workid">{{ item.userId ? `工号 ${item.userId}` : "工号未申请" }}</p>
             </div>
             <!-- status：1 已发布 / 2 未发布（草稿）。新建默认未发布，去详情页发布 -->
             <span

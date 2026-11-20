@@ -33,6 +33,8 @@ export type DigitalRuntime = "builtin" | "external" | "workflow"
 
 export interface IDigitalInfo {
   digitalId: string
+  /** IM 工号 A100000；空/缺省 = 未申请。加好友搜索用的是这个，不是 digitalId */
+  userId?: string
   name: string
   avatar?: string
   description: string
@@ -121,6 +123,15 @@ export interface ISetDigitalStatusReq {
 }
 export interface ISetDigitalStatusRes {
   status: number
+}
+
+/** 手动申请工号（创建 IM 用户），幂等：已申请直接返回现有工号 */
+export interface IApplyWorkIdReq {
+  digitalId: string
+}
+export interface IApplyWorkIdRes {
+  digitalId: string
+  userId: string
 }
 
 // 编排配置：按 runtime 三选一，字段为 JSON 字符串。
