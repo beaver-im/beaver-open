@@ -143,5 +143,3 @@ export class SessionStorage {
   }
 }
 
-// 为了保持向后兼容，导出一个简单的storage对象
-export const storage = LocalStorage
