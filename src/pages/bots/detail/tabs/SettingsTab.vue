@@ -69,6 +69,35 @@
         />
       </el-form-item>
 
+      <el-form-item label="工号">
+        <div class="workid">
+          <template v-if="workId">
+            <span class="workid__value">{{ workId }}</span>
+            <span class="workid__hint">工号即机器人的 user_id，可用于拉群与 @ 机器人</span>
+          </template>
+          <template v-else>
+            <span class="workid__empty">未申请</span>
+            <span class="workid__hint">申请后成为 IM 机器人，可被拉入群并推送消息</span>
+            <el-button
+              type="primary"
+              size="small"
+              :loading="applyingWorkId"
+              @click="onApplyWorkId"
+            >
+              申请工号
+            </el-button>
+          </template>
+        </div>
+      </el-form-item>
+
+      <el-form-item label="管理员">
+        <IdTagsEditor
+          v-model="admins"
+          placeholder="输入管理员用户 ID 后回车添加"
+          hint="管理员可以修改机器人信息、重置密钥与管理可见人员。"
+        />
+      </el-form-item>
+
       <el-form-item label="可见范围">
         <div class="vis">
           <el-select v-model="form.visibility" class="vis__select">
@@ -108,13 +137,6 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="管理员">
-        <IdTagsEditor
-          v-model="admins"
-          placeholder="输入管理员用户 ID 后回车添加"
-          hint="管理员可以修改机器人信息、重置密钥与管理可见人员。"
-        />
-      </el-form-item>
     </el-form>
 
     <template #footer>
@@ -136,7 +158,7 @@ import { computed, reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { Camera, Loading, Plus } from "@element-plus/icons-vue"
-import { deleteBotApi, setBotAdminsApi, setBotViewersApi, updateBotApi } from "@/api/bot"
+import { applyBotWorkIdApi, deleteBotApi, setBotAdminsApi, setBotViewersApi, updateBotApi } from "@/api/bot"
 import { resolveImageUrl, uploadImageFileApi } from "@/api/im"
 import type { BotVisibility, IBotInfo } from "@/types/api/bot"
 import FormCard from "@/pages/digitals/components/FormCard.vue"
@@ -156,6 +178,7 @@ const VISIBILITY_CHOICES = [
 const router = useRouter()
 const saving = ref(false)
 const deleting = ref(false)
+const applyingWorkId = ref(false)
 const uploadingAvatar = ref(false)
 const avatarInputRef = ref<HTMLInputElement>()
 const memberPickerVisible = ref(false)
@@ -172,6 +195,26 @@ const viewers = ref<string[]>([...(props.bot.viewerIds ?? [])])
 const visibilityDesc = computed(
   () => VISIBILITY_CHOICES.find(item => item.value === form.visibility)?.desc ?? ""
 )
+
+/**
+ * 工号 = IM user_id，未申请时为空。botId 是平台 UUID，不再当工号展示。
+ */
+const workId = computed(() => props.bot.userId ?? "")
+
+async function onApplyWorkId() {
+  if (applyingWorkId.value) return
+  applyingWorkId.value = true
+  try {
+    const res = await applyBotWorkIdApi({ botId: props.bot.botId })
+    if (res.code !== 0) throw new Error(res.msg || "申请失败")
+    ElMessage.success(`工号已申请：${res.result?.userId ?? ""}`)
+    emit("refresh")
+  } catch (err) {
+    ElMessage.error(errorMessage(err, "申请工号失败"))
+  } finally {
+    applyingWorkId.value = false
+  }
+}
 
 function errorMessage(err: unknown, fallback: string): string {
   if (err instanceof Error && err.message) return err.message
@@ -337,6 +380,45 @@ async function removeBot() {
   &__file { display: none; }
 
   &__name { flex: 1 1 auto; max-width: 320px; }
+}
+
+.workid {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  width: 100%;
+
+  &__value {
+    min-width: 180px;
+    padding: 0 12px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--ds-radius-md);
+    border: 1px solid var(--ds-border);
+    background: var(--ds-neutral-50);
+    font-family: ui-monospace, "Cascadia Code", monospace;
+    font-size: var(--ds-fs-14);
+    color: var(--ds-neutral-900);
+  }
+
+  &__empty {
+    min-width: 180px;
+    padding: 0 12px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--ds-radius-md);
+    border: 1px dashed var(--ds-border);
+    background: var(--ds-neutral-50);
+    font-size: var(--ds-fs-14);
+    color: var(--ds-neutral-500);
+  }
+
+  &__hint {
+    font-size: var(--ds-fs-13);
+    color: var(--ds-neutral-600);
+  }
 }
 
 .vis {

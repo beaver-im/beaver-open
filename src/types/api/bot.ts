@@ -26,10 +26,14 @@ export type BotVisibility = "private" | "partial" | "public"
 
 export interface IBotInfo {
   botId: string
+  /** IM 工号 B100000；空/缺省 = 未申请。加好友、拉群用的是这个，不是 botId */
+  userId?: string
   name: string
   avatar?: string
   description?: string
   visibility: BotVisibility
+  /** 1 已发布 / 2 未发布。新建默认未发布（草稿），发布后才对 IM 侧生效 */
+  status: number
   webhookUrl: string
   adminIds?: string[]
   viewerIds?: string[]
@@ -40,7 +44,6 @@ export interface ICreateBotReq {
   name: string
   description?: string
   avatar?: string
-  groupId?: string // 创建后拉入该群，不落 bot 表
   visibility?: BotVisibility
 }
 export interface ICreateBotRes {
@@ -64,6 +67,24 @@ export interface IGetBotDetailReq {
 }
 export interface IGetBotDetailRes {
   bot: IBotInfo
+}
+
+/** 手动申请工号（创建 IM 用户），幂等：已申请直接返回现有工号 */
+export interface IApplyBotWorkIdReq {
+  botId: string
+}
+export interface IApplyBotWorkIdRes {
+  botId: string
+  userId: string
+}
+
+/** 发布 / 取消发布：status 1 已发布 2 未发布 */
+export interface ISetBotStatusReq {
+  botId: string
+  status: number
+}
+export interface ISetBotStatusRes {
+  status: number
 }
 
 export interface IUpdateBotReq {

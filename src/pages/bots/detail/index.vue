@@ -32,6 +32,16 @@
 
       <div class="ws-head__row">
         <h1 class="ws-title">{{ bot?.name || (loadFailed ? "机器人不可用" : "推送机器人") }}</h1>
+        <!-- 实体态：发布状态 + 发布/取消发布。未发布是草稿，IM 侧不可用 -->
+        <div v-if="bot" class="ws-head__actions">
+          <span
+            class="ds-badge"
+            :class="published ? 'ds-badge--success' : 'ds-badge--neutral'"
+          >{{ published ? "已发布" : "未发布" }}</span>
+          <el-button :loading="statusSaving" @click="togglePublish">
+            {{ published ? "取消发布" : "发布" }}
+          </el-button>
+        </div>
       </div>
     </header>
 
@@ -56,7 +66,7 @@ import { computed, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { ArrowLeft } from "@element-plus/icons-vue"
-import { getBotDetailApi } from "@/api/bot"
+import { getBotDetailApi, setBotStatusApi } from "@/api/bot"
 import type { IBotInfo } from "@/types/api/bot"
 import TabNav from "@/pages/digitals/components/TabNav.vue"
 import SettingsTab from "./tabs/SettingsTab.vue"
@@ -87,6 +97,28 @@ const select = (key: string) => {
 }
 
 const goList = () => router.push("/robot/bots")
+
+/* ============ 发布 / 取消发布 ============
+ * status：1 已发布 / 2 未发布。新建机器人默认未发布（草稿），
+ * 配置好后再由用户手动发布；未发布时 IM 侧不可用（不能入群、不能推送）。
+ */
+const published = computed(() => bot.value?.status === 1)
+const statusSaving = ref(false)
+const togglePublish = async () => {
+  const current = bot.value
+  if (!current) return
+  const next = published.value ? 2 : 1
+  statusSaving.value = true
+  try {
+    await setBotStatusApi({ botId: current.botId, status: next })
+    current.status = next
+    ElMessage.success(next === 1 ? "已发布" : "已取消发布")
+  } catch (err) {
+    ElMessage.error(errorMessage(err, "操作失败"))
+  } finally {
+    statusSaving.value = false
+  }
+}
 
 function errorMessage(err: unknown, fallback: string): string {
   if (err instanceof Error && err.message) return err.message
@@ -150,6 +182,13 @@ onMounted(loadDetail)
   justify-content: space-between;
   gap: var(--ds-space-4);
   margin-top: var(--ds-space-2);
+}
+
+.ws-head__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  flex: 0 0 auto;
 }
 
 .ws-title {

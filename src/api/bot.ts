@@ -28,6 +28,10 @@ import type {
   IListBotRes,
   IGetBotDetailReq,
   IGetBotDetailRes,
+  IApplyBotWorkIdReq,
+  IApplyBotWorkIdRes,
+  ISetBotStatusReq,
+  ISetBotStatusRes,
   IUpdateBotReq,
   IUpdateBotRes,
   IDeleteBotReq,
@@ -67,6 +71,24 @@ export function updateBotApi(data: IUpdateBotReq) {
   return ajax<IUpdateBotRes>({
     method: "POST",
     url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_update`,
+    data
+  })
+}
+
+/** 手动申请工号（创建 IM 用户，幂等） */
+export function applyBotWorkIdApi(data: IApplyBotWorkIdReq) {
+  return ajax<IApplyBotWorkIdRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_work_id_apply`,
+    data
+  })
+}
+
+/** 发布 / 取消发布：status 1 已发布 2 未发布 */
+export function setBotStatusApi(data: ISetBotStatusReq) {
+  return ajax<ISetBotStatusRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_set_status`,
     data
   })
 }

@@ -62,9 +62,12 @@
             </div>
             <div class="bot-card__heading">
               <h3 class="bot-card__name" :title="item.name">{{ item.name }}</h3>
-              <p class="bot-card__botid">{{ item.botId }}</p>
+              <p class="bot-card__botid">{{ item.userId ? `工号 ${item.userId}` : "工号未申请" }}</p>
             </div>
-            <span class="ds-badge ds-badge--neutral">{{ visibilityText(item.visibility) }}</span>
+            <span
+              class="ds-badge"
+              :class="isPublished(item.status) ? 'ds-badge--success' : 'ds-badge--neutral'"
+            >{{ isPublished(item.status) ? "已发布" : "未发布" }}</span>
           </header>
 
           <p class="bot-card__desc">{{ item.description || "暂无描述" }}</p>
@@ -149,10 +152,9 @@ function formatDate(value?: number): string {
   return new Date(ms).toLocaleDateString("zh-CN")
 }
 
-function visibilityText(value?: string): string {
-  if (value === "public") return "公开"
-  if (value === "partial") return "部分公开"
-  return "非公开"
+/** 发布状态：1 已发布 / 2 未发布。未发布是草稿，IM 侧不可用 */
+function isPublished(status?: number): boolean {
+  return status === 1
 }
 
 const router = useRouter()
