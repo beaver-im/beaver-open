@@ -67,5 +67,5 @@ export function resolveImageUrl(raw?: string): string {
   const value = (raw || "").trim()
   if (!value) return ""
   if (/^(https?:)?\/\//i.test(value) || value.startsWith("data:")) return value
-  return `${base}/beaver-open/api/open/developer/v1/file_preview?fileKey=${encodeURIComponent(value)}`
+  return `${base}/beaver-open/api/open/developer_public/v1/file_preview?fileKey=${encodeURIComponent(value)}`
 }

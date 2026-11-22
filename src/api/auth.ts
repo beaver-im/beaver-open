@@ -27,7 +27,7 @@ import { ajax } from "@/utils/request"
 export const loginApi = (data: ILoginReq) =>{
   return ajax<ILoginRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/auth_login`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer_public/v1/auth_login`,
     data
   })
 }
@@ -36,7 +36,7 @@ export const loginApi = (data: ILoginReq) =>{
 export const oauthLoginApi = (data: { code: string }) => {
   return ajax<ILoginRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/auth_oauth_login`,
+    url: `${config.baseAPI}/beaver-open/api/open/developer_public/v1/auth_oauth_login`,
     data
   })
 }
