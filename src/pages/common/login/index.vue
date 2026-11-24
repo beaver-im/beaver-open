@@ -22,11 +22,7 @@
 <template>
   <div class="login-redirect">
     <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="0" y="0" width="24" height="24" rx="6" fill="#BF4A1B" />
-        <path d="M8 6.5h4.6a3.1 3.1 0 0 1 0 6.2H8V6.5Zm0 6.2h5a3.1 3.1 0 0 1 0 6.2H8v-6.2Z" fill="#FFFFFF" />
-        <path d="M8 6.5h2.2v11H8v-11Z" fill="#FFFFFF" />
-      </svg>
+      <img class="brand-mark" :src="brandMarkIcon" alt="" aria-hidden="true">
       <span>Beaver 开放平台</span>
     </div>
 
@@ -41,6 +37,7 @@
 import { defineComponent, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/pinia/user/user"
+import brandMarkIcon from "@/assets/icons/brandMark.svg"
 import config from "@/config/env"
 
 export default defineComponent({
@@ -74,7 +71,7 @@ export default defineComponent({
       window.location.replace(authUrl)
     })
 
-    return { authUrl }
+    return { authUrl, brandMarkIcon }
   }
 })
 </script>

@@ -128,8 +128,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, reactive, ref } from "vue"
+<script lang="ts">
+import { defineComponent, onMounted, reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { Plus, Right } from "@element-plus/icons-vue"
@@ -138,95 +138,106 @@ import type { IBotInfo } from "@/types/api/bot"
 import { iconColorFor, iconLetter, iconTint } from "@/pages/digitals/components/cardVisual"
 import { setBotCredentialFlash } from "@/pages/bots/credentialFlash"
 
-function errorMessage(err: unknown, fallback: string): string {
-  if (err instanceof Error && err.message) return err.message
-  if (err && typeof err === "object" && "msg" in err) {
-    return String((err as { msg?: string }).msg || fallback)
+export default defineComponent({
+  name: "BotsListPage",
+  setup() {
+    function errorMessage(err: unknown, fallback: string): string {
+      if (err instanceof Error && err.message) return err.message
+      if (err && typeof err === "object" && "msg" in err) {
+        return String((err as { msg?: string }).msg || fallback)
+      }
+      return fallback
+    }
+
+    function formatDate(value?: number): string {
+      if (!value) return "—"
+      const ms = value < 1e12 ? value * 1000 : value
+      return new Date(ms).toLocaleDateString("zh-CN")
+    }
+
+    /** 发布状态：1 已发布 / 2 未发布。未发布是草稿，IM 侧不可用 */
+    function isPublished(status?: number): boolean {
+      return status === 1
+    }
+
+    const router = useRouter()
+    const loading = ref(false)
+    const loadFailed = ref(false)
+    const list = ref<IBotInfo[]>([])
+    const total = ref(0)
+    const page = ref(1)
+    const pageSize = ref(12)
+
+    const loadList = async () => {
+      loading.value = true
+      loadFailed.value = false
+      try {
+        const res = await listBotsApi({ page: page.value, pageSize: pageSize.value })
+        list.value = res?.result?.list ?? []
+        total.value = res?.result?.total ?? 0
+      } catch {
+        loadFailed.value = true
+        ElMessage.error("加载推送机器人失败")
+      } finally {
+        loading.value = false
+      }
+    }
+
+    const goDetail = (item: IBotInfo) => router.push(`/robot/bots/${item.botId}?tab=settings`)
+
+    const dialogVisible = ref(false)
+    const submitting = ref(false)
+    const createForm = reactive({ name: "", description: "" })
+
+    function openCreate() {
+      createForm.name = ""
+      createForm.description = ""
+      dialogVisible.value = true
+    }
+
+    /**
+     * 创建即落库，不再走两步向导：凭据一次性的部分交给开发者分区的 flash 展示。
+     * Token / 签名密钥只在这一刻能拿到明文，所以创建完直接把人带到开发者选项。
+     */
+    async function submitCreate() {
+      const name = createForm.name.trim()
+      if (name.length < 2 || name.length > 50) {
+        ElMessage.warning("名称需 2-50 个字符")
+        return
+      }
+      submitting.value = true
+      try {
+        const res = await createBotApi({
+          name,
+          description: createForm.description.trim() || undefined,
+          visibility: "private"
+        })
+        if (res.code !== 0) throw new Error(res.msg || "创建失败")
+        const botId = res.result?.botId ?? ""
+        if (!botId) throw new Error("创建失败：未返回 botId")
+        setBotCredentialFlash(botId, {
+          webhookUrl: res.result?.webhookUrl ?? "",
+          token: res.result?.token ?? "",
+          secret: res.result?.secret ?? ""
+        })
+        dialogVisible.value = false
+        router.push(`/robot/bots/${botId}?tab=developer`)
+      } catch (err) {
+        ElMessage.error(errorMessage(err, "创建失败"))
+      } finally {
+        submitting.value = false
+      }
+    }
+
+    onMounted(loadList)
+
+    return {
+      loading, list, total, page, pageSize, dialogVisible, submitting, createForm,
+      Plus, Right, iconTint, iconColorFor, iconLetter, formatDate, isPublished,
+      openCreate, goDetail, loadList, submitCreate
+    }
   }
-  return fallback
-}
-
-function formatDate(value?: number): string {
-  if (!value) return "—"
-  const ms = value < 1e12 ? value * 1000 : value
-  return new Date(ms).toLocaleDateString("zh-CN")
-}
-
-/** 发布状态：1 已发布 / 2 未发布。未发布是草稿，IM 侧不可用 */
-function isPublished(status?: number): boolean {
-  return status === 1
-}
-
-const router = useRouter()
-const loading = ref(false)
-const loadFailed = ref(false)
-const list = ref<IBotInfo[]>([])
-const total = ref(0)
-const page = ref(1)
-const pageSize = ref(12)
-
-const loadList = async () => {
-  loading.value = true
-  loadFailed.value = false
-  try {
-    const res = await listBotsApi({ page: page.value, pageSize: pageSize.value })
-    list.value = res?.result?.list ?? []
-    total.value = res?.result?.total ?? 0
-  } catch {
-    loadFailed.value = true
-    ElMessage.error("加载推送机器人失败")
-  } finally {
-    loading.value = false
-  }
-}
-
-const goDetail = (item: IBotInfo) => router.push(`/robot/bots/${item.botId}?tab=settings`)
-
-const dialogVisible = ref(false)
-const submitting = ref(false)
-const createForm = reactive({ name: "", description: "" })
-
-function openCreate() {
-  createForm.name = ""
-  createForm.description = ""
-  dialogVisible.value = true
-}
-
-/**
- * 创建即落库，不再走两步向导：凭据一次性的部分交给开发者分区的 flash 展示。
- * Token / 签名密钥只在这一刻能拿到明文，所以创建完直接把人带到开发者选项。
- */
-async function submitCreate() {
-  const name = createForm.name.trim()
-  if (name.length < 2 || name.length > 50) {
-    ElMessage.warning("名称需 2-50 个字符")
-    return
-  }
-  submitting.value = true
-  try {
-    const res = await createBotApi({
-      name,
-      description: createForm.description.trim() || undefined,
-      visibility: "private"
-    })
-    if (res.code !== 0) throw new Error(res.msg || "创建失败")
-    const botId = res.result?.botId ?? ""
-    if (!botId) throw new Error("创建失败：未返回 botId")
-    setBotCredentialFlash(botId, {
-      webhookUrl: res.result?.webhookUrl ?? "",
-      token: res.result?.token ?? "",
-      secret: res.result?.secret ?? ""
-    })
-    dialogVisible.value = false
-    router.push(`/robot/bots/${botId}?tab=developer`)
-  } catch (err) {
-    ElMessage.error(errorMessage(err, "创建失败"))
-  } finally {
-    submitting.value = false
-  }
-}
-
-onMounted(loadList)
+})
 </script>
 
 <style lang="less" scoped>

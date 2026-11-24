@@ -24,7 +24,7 @@
 // 注意：服务端门户未提供数字伙伴删除接口，前端不提供删除操作。
 //
 // 产品口径：编排有三种形态，与后端 runtime oneof 一一对应：
-// - 提示词（builtin）：平台托管运行，配置人设、模型、工具与知识；
+// - 提示词（builtin）：平台托管运行，配置人设（system/opening/variables）与知识；
 // - 长链接接入（external）：第三方服务通过长连接（WebSocket）接入，平台只签发凭据、转发消息；
 // - 工作流（workflow）：由工作流驱动，节点编排在「编排」分区配置。
 
@@ -46,10 +46,8 @@ export interface IDigitalInfo {
   digitalSecret?: string // 掩码；仅 external 有
   adminIds?: string[]
   viewerIds?: string[]
-  /** 编排配置里的引用数量，列表卡片直接展示 */
-  toolCount?: number
+  /** 编排配置里的知识源引用数量，列表卡片直接展示 */
   knowledgeCount?: number
-  mcpCount?: number
   createdAt: number
   updatedAt?: number
 }
@@ -139,18 +137,26 @@ export interface IApplyWorkIdRes {
 export interface IGetDigitalConfigReq {
   digitalId: string
 }
+/** 编排详情，与 AI 侧 config_detail 同构（内部键 snake_case，原样透传）。 */
+export interface IDigitalConfigDetail {
+  type: number // 1 提示词 2 工作流
+  prompt?: Record<string, unknown>
+  workflow?: Record<string, unknown>
+}
 export interface IGetDigitalConfigRes {
   digitalId: string
   runtime: DigitalRuntime
-  builtinConfig?: string
+  agentId?: string
+  /** 大脑配置唯一真相源在 AI 侧，经 backend 原样返回 */
+  configDetail?: IDigitalConfigDetail
   externalConfig?: string
-  workflowConfig?: string
 }
 export interface ISaveDigitalConfigReq {
   digitalId: string
-  builtinConfig?: string
+  agentId?: string
+  /** 原样透传给 AI 的 config_detail */
+  configDetail?: IDigitalConfigDetail
   externalConfig?: string
-  workflowConfig?: string
 }
 export interface ISaveDigitalConfigRes {}
 

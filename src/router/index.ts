@@ -61,7 +61,7 @@ const router = createRouter({
     {
       path: "/error/404",
       name: "Error404",
-      component: () => import("@/pages/common/error/404.vue"),
+      component: () => import("@/pages/common/error/notFound.vue"),
       meta: { title: "页面不存在", public: true }
     },
 
@@ -169,7 +169,7 @@ const router = createRouter({
         {
           path: "/robot/digitals/:digitalId/knowledge/create",
           name: "DigitalKnowledgeSourceCreate",
-          component: () => import("@/pages/digitals/knowledge-source/create.vue"),
+          component: () => import("@/pages/digitals/knowledgeSource/create.vue"),
           meta: {
             title: "创建知识源",
             requiresAuth: true,
@@ -185,7 +185,7 @@ const router = createRouter({
         {
           path: "/robot/digitals/:digitalId/knowledge/:knowledgeSourceId",
           name: "DigitalKnowledgeSourceDetail",
-          component: () => import("@/pages/digitals/knowledge-source/index.vue"),
+          component: () => import("@/pages/digitals/knowledgeSource/index.vue"),
           meta: {
             title: "知识源",
             requiresAuth: true,

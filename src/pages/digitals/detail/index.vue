@@ -82,7 +82,7 @@ import { ElMessage } from "element-plus"
 import { ArrowLeft } from "@element-plus/icons-vue"
 import { createDigitalApi, getDigitalDetailApi, setDigitalStatusApi, updateDigitalApi } from "@/api/digital"
 import type { IDigitalInfo } from "@/types/api/digital"
-import TabNav from "@/pages/digitals/components/TabNav.vue"
+import TabNav from "@/pages/digitals/components/tabNav.vue"
 import { modeText } from "@/pages/digitals/detail/constants"
 import { credentialFlash, setCredentialFlash } from "./credentialFlash"
 import {
@@ -95,11 +95,11 @@ import {
   type DigitalMode,
   type DigitalWorkspace
 } from "./workspace"
-import OrchestrationTab from "./tabs/OrchestrationTab.vue"
-import KnowledgeTab from "./tabs/KnowledgeTab.vue"
-import ToolsTab from "./tabs/ToolsTab.vue"
-import DeveloperOptionsTab from "./tabs/DeveloperOptionsTab.vue"
-import SettingsTab from "./tabs/SettingsTab.vue"
+import OrchestrationTab from "./tabs/orchestrationTab.vue"
+import KnowledgeTab from "./tabs/knowledgeTab.vue"
+import ToolsTab from "./tabs/toolsTab.vue"
+import DeveloperOptionsTab from "./tabs/developerOptionsTab.vue"
+import SettingsTab from "./tabs/settingsTab.vue"
 
 export default defineComponent({
   name: "DigitalsDetailPage",

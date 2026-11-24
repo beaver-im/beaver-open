@@ -80,33 +80,23 @@ export interface DigitalDraft {
   mode: DigitalMode
 }
 
-/** 表单变量的一行。key 只用于 v-for，不写进服务端 JSON。 */
+/** 表单变量的一行，与 AI 侧 PromptVariable 同构（name/default）。 */
 export interface VariableRow {
-  key: string
   name: string
   label: string
-  type: "text" | "number" | "select"
+  type: "text" | "textarea" | "select"
   default: string
   required: boolean
   options: string[]
 }
 
-/** 提示词编排的完整配置，对应服务端 BuiltinConfig。 */
+/** 提示词编排配置，读写 AI 侧 config_detail(type=1 prompt)：system/opening_message/opening_questions/variables。 */
 export interface PromptConfig {
-  systemPrompt: string
-  llmModelId: string
-  temperature: number | null
-  maxTurns: number | null
+  system: string
   openingMessage: string
   openingQuestions: string[]
   variables: VariableRow[]
-  tools: string[]
-  mcpServerIds: string[]
-  /**
-   * 运行时实际检索的扁平知识库 ID。
-   * 这列由后端按 open_knowledge_source 表合并去重派生，config/save 会重算回填，
-   * 这里只做回显，不要在前端编辑，也不要随编排配置提交。
-   */
+  /** 运行时知识库 ID（后端按知识源表派生，只读回显，不随编排提交） */
   knowledgeIds: string[]
 }
 
@@ -163,15 +153,10 @@ function asStringArray(value: unknown): string[] {
 
 function emptyPrompt(): PromptConfig {
   return {
-    systemPrompt: "",
-    llmModelId: "",
-    temperature: null,
-    maxTurns: null,
+    system: "",
     openingMessage: "",
     openingQuestions: [],
     variables: [],
-    tools: [],
-    mcpServerIds: [],
     knowledgeIds: []
   }
 }
@@ -207,30 +192,18 @@ export function createDigitalConfig(): DigitalConfigService {
     try {
       const res = await getDigitalConfigApi({ digitalId: id })
       const result = res?.result
-      const raw = parseConfig<Record<string, unknown>>(result?.builtinConfig, {})
-      const modelParams = raw.modelParams &&
-        typeof raw.modelParams === "object" &&
-        !Array.isArray(raw.modelParams)
-        ? (raw.modelParams as Record<string, unknown>)
-        : {}
+      const detail = result?.configDetail
+      const p = (detail?.type === 1 && detail.prompt) || {}
 
-      prompt.systemPrompt = String(raw.systemPrompt ?? "")
-      prompt.llmModelId = String(raw.llmModelId ?? "")
-      prompt.temperature = typeof modelParams.temperature === "number" ? modelParams.temperature : null
-      prompt.maxTurns = typeof modelParams.maxTurns === "number" ? modelParams.maxTurns : null
-      prompt.openingMessage = String(raw.openingMessage ?? "")
-      prompt.openingQuestions = asStringArray(raw.openingQuestions)
-      prompt.tools = asStringArray(raw.tools)
-      prompt.mcpServerIds = asStringArray(raw.mcpServerIds)
-      // 只读回显：知识源已迁到后端实体，运行时列表由后端按知识源表重算。
-      prompt.knowledgeIds = asStringArray(raw.knowledgeIds)
+      prompt.system = String((p as any).system ?? "")
+      prompt.openingMessage = String((p as any).opening_message ?? "")
+      prompt.openingQuestions = asStringArray((p as any).opening_questions)
 
-      const variables = Array.isArray(raw.variables) ? raw.variables : []
+      const variables = Array.isArray((p as any).variables) ? (p as any).variables : []
       prompt.variables = variables.map((item: any) => ({
-        key: shortId("var"),
-        name: String(item?.name ?? ""),
+        name: String(item?.name ?? shortId("var")),
         label: String(item?.label ?? ""),
-        type: (["text", "number", "select"].includes(item?.type) ? item.type : "text") as VariableRow["type"],
+        type: (["text", "textarea", "select"].includes(item?.type) ? item.type : "text") as VariableRow["type"],
         default: String(item?.default ?? ""),
         required: Boolean(item?.required),
         options: asStringArray(item?.options)
@@ -238,9 +211,6 @@ export function createDigitalConfig(): DigitalConfigService {
 
       const ext = parseConfig<{ callbackUrl?: string }>(result?.externalConfig, {})
       external.callbackUrl = String(ext.callbackUrl ?? "")
-
-      const wf = parseConfig<Record<string, unknown>>(result?.workflowConfig, {})
-      Object.assign(workflow, wf)
     } catch {
       // 首次创建后还没有配置行时接口可能返回空字段，按空配置继续编辑即可
     } finally {
@@ -278,38 +248,32 @@ export function createDigitalConfig(): DigitalConfigService {
     try {
       if (mode === "prompt") {
         if (!validateVariables()) return false
-        // 不提交 knowledgeIds / knowledgeSources：知识源是后端实体，
-        // 服务端在 config/save 时按 open_knowledge_source 表重算运行时列表并回填，
-        // 前端若跟着提交会把其它分区刚改过的引用覆盖掉。
-        const modelParams: Record<string, number> = {}
-        if (typeof prompt.temperature === "number") modelParams.temperature = prompt.temperature
-        if (typeof prompt.maxTurns === "number") modelParams.maxTurns = prompt.maxTurns
-        const payload = {
-          systemPrompt: prompt.systemPrompt.trim(),
-          llmModelId: prompt.llmModelId.trim(),
-          modelParams,
-          openingMessage: prompt.openingMessage.trim(),
-          openingQuestions: prompt.openingQuestions.map(item => item.trim()).filter(Boolean),
-          variables: prompt.variables.map(item => ({
-            name: item.name.trim(),
-            label: item.label.trim(),
-            type: item.type,
-            default: item.default.trim() || undefined,
-            required: item.required,
-            options: item.type === "select" ? item.options : undefined
-          })),
-          tools: prompt.tools,
-          mcpServerIds: prompt.mcpServerIds
+        // 编排唯一真相源是 AI 侧 config_detail，内部键 snake_case 原样透传。
+        const configDetail = {
+          type: 1,
+          prompt: {
+            system: prompt.system.trim(),
+            opening_message: prompt.openingMessage.trim(),
+            opening_questions: prompt.openingQuestions.map(item => item.trim()).filter(Boolean),
+            variables: prompt.variables.map(item => ({
+              name: item.name.trim(),
+              label: item.label.trim(),
+              type: item.type,
+              default: item.default.trim(),
+              required: item.required,
+              options: item.type === "select" ? item.options : undefined
+            }))
+          }
         }
         const res = await saveDigitalConfigApi({
           digitalId: id,
-          builtinConfig: JSON.stringify(payload)
+          configDetail
         })
         if (res.code !== 0) throw new Error(res.msg || "保存失败")
       } else if (mode === "workflow") {
         const res = await saveDigitalConfigApi({
           digitalId: id,
-          workflowConfig: JSON.stringify(workflow)
+          configDetail: { type: 2, workflow }
         })
         if (res.code !== 0) throw new Error(res.msg || "保存失败")
       } else {

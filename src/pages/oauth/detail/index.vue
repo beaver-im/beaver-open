@@ -51,81 +51,89 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue"
+<script lang="ts">
+import { computed, defineComponent, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { ArrowLeft } from "@element-plus/icons-vue"
 import { getOAuthAppDetailApi } from "@/api/oauth"
 import type { IOAuthAppInfo } from "@/types/api/oauth"
-import TabNav from "@/pages/digitals/components/TabNav.vue"
-import SettingsTab from "./tabs/SettingsTab.vue"
-import PlatformsTab from "./tabs/PlatformsTab.vue"
-import DeveloperTab from "./tabs/DeveloperTab.vue"
+import TabNav from "@/pages/digitals/components/tabNav.vue"
+import SettingsTab from "./tabs/settingsTab.vue"
+import PlatformsTab from "./tabs/platformsTab.vue"
+import DeveloperTab from "./tabs/developerTab.vue"
 
-const route = useRoute()
-const router = useRouter()
+export default defineComponent({
+  name: "OAuthDetailPage",
+  components: { ArrowLeft, TabNav, SettingsTab, PlatformsTab, DeveloperTab },
+  setup() {
+    const route = useRoute()
+    const router = useRouter()
 
-const oauthId = computed(() => String(route.params.oauthId || ""))
-const loading = ref(false)
-const loadFailed = ref(false)
-const app = ref<IOAuthAppInfo | null>(null)
+    const oauthId = computed(() => String(route.params.oauthId || ""))
+    const loading = ref(false)
+    const loadFailed = ref(false)
+    const app = ref<IOAuthAppInfo | null>(null)
 
-const tabs = [
-  { key: "settings", label: "设置" },
-  { key: "platforms", label: "端配置" },
-  { key: "developer", label: "开发者选项" }
-]
+    const tabs = [
+      { key: "settings", label: "设置" },
+      { key: "platforms", label: "端配置" },
+      { key: "developer", label: "开发者选项" }
+    ]
 
-/** 分区与 URL ?tab= 同步：刷新、分享、浏览器后退都停在同一分区。 */
-const active = computed(() => {
-  const queryTab = String(route.query.tab || "")
-  return tabs.some(item => item.key === queryTab) ? queryTab : "settings"
+    /** 分区与 URL ?tab= 同步：刷新、分享、浏览器后退都停在同一分区。 */
+    const active = computed(() => {
+      const queryTab = String(route.query.tab || "")
+      return tabs.some(item => item.key === queryTab) ? queryTab : "settings"
+    })
+
+    const select = (key: string) => {
+      if (key === active.value) return
+      router.replace({ query: { ...route.query, tab: key } })
+    }
+
+    const goList = () => router.push("/oauth")
+
+    function errorMessage(err: unknown, fallback: string): string {
+      if (err instanceof Error && err.message) return err.message
+      if (err && typeof err === "object" && "msg" in err) {
+        return String((err as { msg?: string }).msg || fallback)
+      }
+      return fallback
+    }
+
+    async function loadDetail() {
+      const id = oauthId.value
+      if (!id) {
+        loadFailed.value = true
+        return
+      }
+      loading.value = true
+      loadFailed.value = false
+      try {
+        const res = await getOAuthAppDetailApi({ oauthId: id })
+        const info = res?.result?.app
+        if (!info) throw new Error("应用不存在")
+        app.value = info
+        route.meta.entityName = info.name
+      } catch (err) {
+        loadFailed.value = true
+        ElMessage.error(errorMessage(err, "加载应用详情失败"))
+      } finally {
+        loading.value = false
+      }
+    }
+
+    // 详情页组件在 :oauthId 变化时会复用，必须重新拉取，避免显示上一个应用的数据。
+    watch(oauthId, (id, previous) => {
+      if (id && id !== previous) loadDetail()
+    })
+
+    onMounted(loadDetail)
+
+    return { oauthId, loading, loadFailed, app, tabs, active, select, goList, loadDetail }
+  }
 })
-
-const select = (key: string) => {
-  if (key === active.value) return
-  router.replace({ query: { ...route.query, tab: key } })
-}
-
-const goList = () => router.push("/oauth")
-
-function errorMessage(err: unknown, fallback: string): string {
-  if (err instanceof Error && err.message) return err.message
-  if (err && typeof err === "object" && "msg" in err) {
-    return String((err as { msg?: string }).msg || fallback)
-  }
-  return fallback
-}
-
-async function loadDetail() {
-  const id = oauthId.value
-  if (!id) {
-    loadFailed.value = true
-    return
-  }
-  loading.value = true
-  loadFailed.value = false
-  try {
-    const res = await getOAuthAppDetailApi({ oauthId: id })
-    const info = res?.result?.app
-    if (!info) throw new Error("应用不存在")
-    app.value = info
-    route.meta.entityName = info.name
-  } catch (err) {
-    loadFailed.value = true
-    ElMessage.error(errorMessage(err, "加载应用详情失败"))
-  } finally {
-    loading.value = false
-  }
-}
-
-// 详情页组件在 :oauthId 变化时会复用，必须重新拉取，避免显示上一个应用的数据。
-watch(oauthId, (id, previous) => {
-  if (id && id !== previous) loadDetail()
-})
-
-onMounted(loadDetail)
 </script>
 
 <style lang="less" scoped>

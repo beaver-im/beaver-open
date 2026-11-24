@@ -61,101 +61,112 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue"
+<script lang="ts">
+import { computed, defineComponent, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { ArrowLeft } from "@element-plus/icons-vue"
 import { getBotDetailApi, setBotStatusApi } from "@/api/bot"
 import type { IBotInfo } from "@/types/api/bot"
-import TabNav from "@/pages/digitals/components/TabNav.vue"
-import SettingsTab from "./tabs/SettingsTab.vue"
-import DeveloperTab from "./tabs/DeveloperTab.vue"
+import TabNav from "@/pages/digitals/components/tabNav.vue"
+import SettingsTab from "./tabs/settingsTab.vue"
+import DeveloperTab from "./tabs/developerTab.vue"
 
-const route = useRoute()
-const router = useRouter()
+export default defineComponent({
+  name: "BotsDetailPage",
+  components: { ArrowLeft, TabNav, SettingsTab, DeveloperTab },
+  setup() {
+    const route = useRoute()
+    const router = useRouter()
 
-const botId = computed(() => String(route.params.botId || ""))
-const loading = ref(false)
-const loadFailed = ref(false)
-const bot = ref<IBotInfo | null>(null)
+    const botId = computed(() => String(route.params.botId || ""))
+    const loading = ref(false)
+    const loadFailed = ref(false)
+    const bot = ref<IBotInfo | null>(null)
 
-const tabs = [
-  { key: "settings", label: "设置" },
-  { key: "developer", label: "开发者选项" }
-]
+    const tabs = [
+      { key: "settings", label: "设置" },
+      { key: "developer", label: "开发者选项" }
+    ]
 
-/** 分区与 URL ?tab= 同步：刷新、分享、浏览器后退都停在同一分区。 */
-const active = computed(() => {
-  const queryTab = String(route.query.tab || "")
-  return tabs.some(item => item.key === queryTab) ? queryTab : "settings"
+    /** 分区与 URL ?tab= 同步：刷新、分享、浏览器后退都停在同一分区。 */
+    const active = computed(() => {
+      const queryTab = String(route.query.tab || "")
+      return tabs.some(item => item.key === queryTab) ? queryTab : "settings"
+    })
+
+    const select = (key: string) => {
+      if (key === active.value) return
+      router.replace({ query: { ...route.query, tab: key } })
+    }
+
+    const goList = () => router.push("/robot/bots")
+
+    /* ============ 发布 / 取消发布 ============
+     * status：1 已发布 / 2 未发布。新建机器人默认未发布（草稿），
+     * 配置好后再由用户手动发布；未发布时 IM 侧不可用（不能入群、不能推送）。
+     */
+    const published = computed(() => bot.value?.status === 1)
+    const statusSaving = ref(false)
+    const togglePublish = async () => {
+      const current = bot.value
+      if (!current) return
+      const next = published.value ? 2 : 1
+      statusSaving.value = true
+      try {
+        await setBotStatusApi({ botId: current.botId, status: next })
+        current.status = next
+        ElMessage.success(next === 1 ? "已发布" : "已取消发布")
+      } catch (err) {
+        ElMessage.error(errorMessage(err, "操作失败"))
+      } finally {
+        statusSaving.value = false
+      }
+    }
+
+    function errorMessage(err: unknown, fallback: string): string {
+      if (err instanceof Error && err.message) return err.message
+      if (err && typeof err === "object" && "msg" in err) {
+        return String((err as { msg?: string }).msg || fallback)
+      }
+      return fallback
+    }
+
+    async function loadDetail() {
+      const id = botId.value
+      if (!id) {
+        loadFailed.value = true
+        return
+      }
+      loading.value = true
+      loadFailed.value = false
+      try {
+        const res = await getBotDetailApi({ botId: id })
+        const info = res?.result?.bot
+        if (!info) throw new Error("机器人不存在")
+        bot.value = info
+        route.meta.entityName = info.name
+      } catch (err) {
+        loadFailed.value = true
+        ElMessage.error(errorMessage(err, "加载机器人详情失败"))
+      } finally {
+        loading.value = false
+      }
+    }
+
+    // 详情页组件在 :botId 变化时会复用，必须重新拉取，避免显示上一个机器人的数据。
+    watch(botId, (id, previous) => {
+      if (id && id !== previous) loadDetail()
+    })
+
+    onMounted(loadDetail)
+
+    return {
+      botId, loading, loadFailed, bot, tabs, active, select, goList,
+      published, statusSaving, togglePublish, loadDetail
+    }
+  }
 })
-
-const select = (key: string) => {
-  if (key === active.value) return
-  router.replace({ query: { ...route.query, tab: key } })
-}
-
-const goList = () => router.push("/robot/bots")
-
-/* ============ 发布 / 取消发布 ============
- * status：1 已发布 / 2 未发布。新建机器人默认未发布（草稿），
- * 配置好后再由用户手动发布；未发布时 IM 侧不可用（不能入群、不能推送）。
- */
-const published = computed(() => bot.value?.status === 1)
-const statusSaving = ref(false)
-const togglePublish = async () => {
-  const current = bot.value
-  if (!current) return
-  const next = published.value ? 2 : 1
-  statusSaving.value = true
-  try {
-    await setBotStatusApi({ botId: current.botId, status: next })
-    current.status = next
-    ElMessage.success(next === 1 ? "已发布" : "已取消发布")
-  } catch (err) {
-    ElMessage.error(errorMessage(err, "操作失败"))
-  } finally {
-    statusSaving.value = false
-  }
-}
-
-function errorMessage(err: unknown, fallback: string): string {
-  if (err instanceof Error && err.message) return err.message
-  if (err && typeof err === "object" && "msg" in err) {
-    return String((err as { msg?: string }).msg || fallback)
-  }
-  return fallback
-}
-
-async function loadDetail() {
-  const id = botId.value
-  if (!id) {
-    loadFailed.value = true
-    return
-  }
-  loading.value = true
-  loadFailed.value = false
-  try {
-    const res = await getBotDetailApi({ botId: id })
-    const info = res?.result?.bot
-    if (!info) throw new Error("机器人不存在")
-    bot.value = info
-    route.meta.entityName = info.name
-  } catch (err) {
-    loadFailed.value = true
-    ElMessage.error(errorMessage(err, "加载机器人详情失败"))
-  } finally {
-    loading.value = false
-  }
-}
-
-// 详情页组件在 :botId 变化时会复用，必须重新拉取，避免显示上一个机器人的数据。
-watch(botId, (id, previous) => {
-  if (id && id !== previous) loadDetail()
-})
-
-onMounted(loadDetail)
 </script>
 
 <style lang="less" scoped>

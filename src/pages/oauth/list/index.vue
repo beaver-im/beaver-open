@@ -134,8 +134,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue"
+<script lang="ts">
+import { computed, defineComponent, onMounted, reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
 import { Plus, Right } from "@element-plus/icons-vue"
@@ -144,84 +144,95 @@ import type { IOAuthAppInfo } from "@/types/api/oauth"
 import { iconColorFor, iconLetter, iconTint } from "@/pages/digitals/components/cardVisual"
 import { setOAuthCredentialFlash } from "@/pages/oauth/credentialFlash"
 
-function errorMessage(err: unknown, fallback: string): string {
-  if (err instanceof Error && err.message) return err.message
-  if (err && typeof err === "object" && "msg" in err) {
-    return String((err as { msg?: string }).msg || fallback)
+export default defineComponent({
+  name: "OAuthListPage",
+  setup() {
+    function errorMessage(err: unknown, fallback: string): string {
+      if (err instanceof Error && err.message) return err.message
+      if (err && typeof err === "object" && "msg" in err) {
+        return String((err as { msg?: string }).msg || fallback)
+      }
+      return fallback
+    }
+
+    function formatDate(value?: number): string {
+      if (!value) return "—"
+      const ms = value < 1e12 ? value * 1000 : value
+      return new Date(ms).toLocaleDateString("zh-CN")
+    }
+
+    const router = useRouter()
+    const loading = ref(false)
+    const loadFailed = ref(false)
+    const list = ref<IOAuthAppInfo[]>([])
+    const total = ref(0)
+    const page = ref(1)
+    const pageSize = ref(12)
+
+    const loadList = async () => {
+      loading.value = true
+      loadFailed.value = false
+      try {
+        const res = await getOAuthAppListApi({ page: page.value, pageSize: pageSize.value })
+        list.value = res?.result?.list ?? []
+        total.value = res?.result?.total ?? 0
+      } catch {
+        loadFailed.value = true
+        ElMessage.error("加载 OAuth 应用失败")
+      } finally {
+        loading.value = false
+      }
+    }
+
+    const goDetail = (item: IOAuthAppInfo) => router.push(`/oauth/${item.oauthId}?tab=settings`)
+    const emptyText = computed(() =>
+      loadFailed.value ? "加载失败，请重新进入本页" : "还没有 OAuth 应用"
+    )
+
+    const dialogVisible = ref(false)
+    const submitting = ref(false)
+    const createForm = reactive({ name: "", description: "" })
+
+    function openCreate() {
+      createForm.name = ""
+      createForm.description = ""
+      dialogVisible.value = true
+    }
+
+    async function submitCreate() {
+      const name = createForm.name.trim()
+      if (name.length < 2 || name.length > 50) {
+        ElMessage.warning("名称需 2-50 个字符")
+        return
+      }
+      submitting.value = true
+      try {
+        const res = await createOAuthAppApi({
+          name,
+          description: createForm.description.trim() || undefined
+        })
+        if (res.code !== 0) throw new Error(res.msg || "创建失败")
+        const oauthId = res.result?.oauthId ?? ""
+        if (!oauthId) throw new Error("创建失败：未返回 oauthId")
+        setOAuthCredentialFlash(oauthId, res.result?.oauthSecret ?? "")
+        dialogVisible.value = false
+        router.push(`/oauth/${oauthId}?tab=developer`)
+      } catch (err) {
+        ElMessage.error(errorMessage(err, "创建失败"))
+      } finally {
+        submitting.value = false
+      }
+    }
+
+    onMounted(loadList)
+
+    return {
+      loading, list, total, page, pageSize, emptyText, dialogVisible, submitting, createForm,
+      Plus, Right, iconTint, iconColorFor, iconLetter, formatDate,
+      openCreate, goDetail, loadList, submitCreate
+    }
   }
-  return fallback
-}
-
-function formatDate(value?: number): string {
-  if (!value) return "—"
-  const ms = value < 1e12 ? value * 1000 : value
-  return new Date(ms).toLocaleDateString("zh-CN")
-}
-
-const router = useRouter()
-const loading = ref(false)
-const loadFailed = ref(false)
-const list = ref<IOAuthAppInfo[]>([])
-const total = ref(0)
-const page = ref(1)
-const pageSize = ref(12)
-
-const loadList = async () => {
-  loading.value = true
-  loadFailed.value = false
-  try {
-    const res = await getOAuthAppListApi({ page: page.value, pageSize: pageSize.value })
-    list.value = res?.result?.list ?? []
-    total.value = res?.result?.total ?? 0
-  } catch {
-    loadFailed.value = true
-    ElMessage.error("加载 OAuth 应用失败")
-  } finally {
-    loading.value = false
-  }
-}
-
-const goDetail = (item: IOAuthAppInfo) => router.push(`/oauth/${item.oauthId}?tab=settings`)
-const emptyText = computed(() =>
-  loadFailed.value ? "加载失败，请重新进入本页" : "还没有 OAuth 应用"
-)
-
-const dialogVisible = ref(false)
-const submitting = ref(false)
-const createForm = reactive({ name: "", description: "" })
-
-function openCreate() {
-  createForm.name = ""
-  createForm.description = ""
-  dialogVisible.value = true
-}
-
-async function submitCreate() {
-  const name = createForm.name.trim()
-  if (name.length < 2 || name.length > 50) {
-    ElMessage.warning("名称需 2-50 个字符")
-    return
-  }
-  submitting.value = true
-  try {
-    const res = await createOAuthAppApi({
-      name,
-      description: createForm.description.trim() || undefined
-    })
-    if (res.code !== 0) throw new Error(res.msg || "创建失败")
-    const oauthId = res.result?.oauthId ?? ""
-    if (!oauthId) throw new Error("创建失败：未返回 oauthId")
-    setOAuthCredentialFlash(oauthId, res.result?.oauthSecret ?? "")
-    dialogVisible.value = false
-    router.push(`/oauth/${oauthId}?tab=developer`)
-  } catch (err) {
-    ElMessage.error(errorMessage(err, "创建失败"))
-  } finally {
-    submitting.value = false
-  }
-}
-
-onMounted(loadList)
+})
 </script>
 
 <style lang="less" scoped>

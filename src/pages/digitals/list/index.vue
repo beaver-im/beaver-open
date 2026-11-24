@@ -72,9 +72,7 @@
           <p class="digital-card__desc">{{ item.description || "暂无描述" }}</p>
 
           <footer class="digital-card__stats">
-            <span class="digital-card__stat"><b>{{ item.toolCount ?? 0 }}</b> 工具</span>
             <span class="digital-card__stat"><b>{{ item.knowledgeCount ?? 0 }}</b> 知识库</span>
-            <span class="digital-card__stat"><b>{{ item.mcpCount ?? 0 }}</b> MCP</span>
             <el-icon class="digital-card__go"><Right /></el-icon>
           </footer>
         </article>

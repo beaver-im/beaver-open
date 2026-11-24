@@ -26,8 +26,8 @@ import App from "./App.vue"
 import router from "./router"
 // 顺序不可调换：先加载 EP 编译后的 CSS，再用 --el-* 变量覆盖它，最后加载全局样式
 import "element-plus/dist/index.css"
-import "./styles/design-system.css"
-import "./styles/element-overrides.css"
+import "./styles/designSystem.css"
+import "./styles/elementOverrides.css"
 import "./styles/global.css"
 
 const app = createApp(App)

@@ -54,8 +54,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue"
-import NavigationBar from "./components/NavigationBar/index.vue"
-import Sidebar from "./components/Sidebar/index.vue"
+import NavigationBar from "./components/navigationBar/index.vue"
+import Sidebar from "./components/sidebar/index.vue"
 
 export default defineComponent({
   components: {

@@ -19,9 +19,9 @@
  * beaver-open-header-v1
  */
 
-import type { IApiResponse, ILoginReq, ILoginRes } from "@/types/auth"
+import type { IApiResponse, ILoginRes } from "@/types/auth"
 import { defineStore } from "pinia"
-import { loginApi, oauthLoginApi } from "@/api/auth"
+import { oauthLoginApi } from "@/api/auth"
 
 export const useUserStore = defineStore("useUserStore", {
   state: () => ({
@@ -61,27 +61,6 @@ export const useUserStore = defineStore("useUserStore", {
     // 设置用户信息
     setUserInfo(userInfo: any) {
       this.userInfo = userInfo
-    },
-
-    // 登录
-    async login(loginData: ILoginReq) {
-      try {
-        const response: IApiResponse<ILoginRes> = await loginApi(loginData)
-
-        if (response.code === 0) {
-          const { token, userId, nickName } = response.result
-
-          this.setToken(token)
-          this.setUserId(userId)
-          this.setNickName(nickName)
-
-          return { success: true, data: response.result }
-        } else {
-          throw new Error(response.msg || "登录失败")
-        }
-      } catch (error: any) {
-        throw new Error(error.message || "登录失败")
-      }
     },
 
     // OAuth 授权码登录
