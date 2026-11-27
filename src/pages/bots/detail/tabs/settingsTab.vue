@@ -159,7 +159,7 @@ import { useRouter } from "vue-router"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { Camera, Loading, Plus } from "@element-plus/icons-vue"
 import { applyBotWorkIdApi, deleteBotApi, setBotAdminsApi, setBotViewersApi, updateBotApi } from "@/api/bot"
-import { resolveImageUrl, uploadImageFileApi } from "@/api/im"
+import { uploadImageFileApi } from "@/api/im"
 import type { BotVisibility, IBotInfo } from "@/types/api/bot"
 import FormCard from "@/pages/digitals/components/formCard.vue"
 import IdTagsEditor from "@/pages/digitals/components/idTagsEditor.vue"
@@ -255,7 +255,7 @@ export default defineComponent({
       uploadingAvatar.value = true
       try {
         const res = await uploadImageFileApi(file)
-        form.avatar = resolveImageUrl(res.fileUrl || res.fileKey)
+        form.avatar = res.fileUrl
         ElMessage.success("头像已更新，保存后生效")
       } catch (err) {
         ElMessage.error(errorMessage(err, "头像上传失败"))

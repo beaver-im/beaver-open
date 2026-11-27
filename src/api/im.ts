@@ -28,7 +28,9 @@
  */
 
 import config from "@/config/env"
-import { ajax } from "@/utils/request"
+import { ajax, redirectToLogin } from "@/utils/request"
+import { readUserInfo } from "@/utils/storage"
+import type { ILoginRes } from "@/types/auth"
 import type { ISearchImUserReq, ISearchImUserRes, IUploadFileRes } from "@/types/api/im"
 
 const base = config.baseAPI
@@ -50,22 +52,19 @@ export function searchImUserApi(params: ISearchImUserReq) {
 export async function uploadImageFileApi(file: File): Promise<IUploadFileRes> {
   const form = new FormData()
   form.append("file", file)
-  const token = localStorage.getItem("token") || ""
+  const token = readUserInfo<ILoginRes>()?.token || ""
   const resp = await fetch(`${base}/beaver-open/api/open/developer/v1/file_upload`, {
     method: "POST",
     headers: token ? { Token: token } : undefined,
     body: form
   })
+  // fetch 绕过 axios 拦截器，网关 401 必须在这里自己兜住
+  if (resp.status === 401) {
+    redirectToLogin()
+    throw new Error("登录已失效，请重新登录")
+  }
   const json = (await resp.json()) as { code: number; msg: string; result?: IUploadFileRes }
   if (json.code !== 0) throw new Error(json.msg || "图片上传失败")
-  if (!json.result?.fileKey) throw new Error("图片上传失败：服务端未返回文件标识")
+  if (!json.result?.fileUrl) throw new Error("图片上传失败：服务端未返回文件地址")
   return json.result
-}
-
-/** 头像 / 图片统一成可直接给 img 用的地址：完整 URL 原样返回，裸 fileKey 走 preview 接口 */
-export function resolveImageUrl(raw?: string): string {
-  const value = (raw || "").trim()
-  if (!value) return ""
-  if (/^(https?:)?\/\//i.test(value) || value.startsWith("data:")) return value
-  return `${base}/beaver-open/api/open/developer_public/v1/file_preview?fileKey=${encodeURIComponent(value)}`
 }

@@ -28,7 +28,7 @@ export interface ISearchImUserReq {
 export interface ISearchImUserRes {
   userId: string
   nickName: string
-  /** 头像，可能是完整 URL，也可能是 fileKey */
+  /** 头像 URL */
   avatar: string
   email?: string
   abstract?: string
@@ -36,7 +36,6 @@ export interface ISearchImUserRes {
 
 /** 文件上传（file 域），multipart 字段名固定为 file */
 export interface IUploadFileRes {
-  fileKey: string
-  fileUrl?: string
+  fileUrl: string
   originalName: string
 }

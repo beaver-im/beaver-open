@@ -27,7 +27,7 @@ import { ajax } from "@/utils/request"
 export function oauthLoginApi(data: { code: string }) {
   return ajax<ILoginRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer_public/v1/auth_oauth_login`,
-    data
+    url: `${config.baseAPI}/beaver-open/api/open/login_public/v1/auth_oauth_login`,
+    data: { oauthId: config.openOAuthId, code: data.code }
   })
 }

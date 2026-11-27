@@ -54,8 +54,8 @@ beaver-open 是 **Vue 3 + TypeScript + Vite 7** 的单页门户，不是 Electro
 **配置来源**：[src/config/env.ts](../src/config/env.ts) 导出 `config.baseAPI`（只含网关 origin，不含任何路径段）与 `config.env`、OAuth 相关常量。每个接口的完整路径写在 API 文件里，形如：
 
 ```text
-/beaver-open/api/open/developer/v1/{action}         需登录
-/beaver-open/api/open/developer_public/v1/{action}  公开（登录、OAuth 换票）
+/beaver-open/api/open/developer/v1/{action}     需登录
+/beaver-open/api/open/login_public/v1/{action}  公开（登录、OAuth 换票）
 ```
 
 ## 1.5 后端边界

@@ -37,8 +37,6 @@ export default defineComponent({
     const userStore = useUserStore()
 
     onMounted(async () => {
-      userStore.initUserInfo()
-
       // hash 路由下 OAuth 回调的 code 在 # 前的 search 里，任意页面都可能收到
       const searchParams = new URLSearchParams(window.location.search)
       const code = searchParams.get("code")
@@ -59,16 +57,13 @@ export default defineComponent({
       }
       if (!code) return
 
-      try {
-        const result = await userStore.oauthLogin({ code })
-        clearParams()
-        if (result.success) {
-          ElMessage.success("登录成功")
-          router.replace("/dashboard")
-        }
-      } catch (err: any) {
-        clearParams()
-        ElMessage.error(err?.message || "登录失败")
+      const success = await userStore.oauthLogin({ code })
+      clearParams()
+      if (success) {
+        ElMessage.success("登录成功")
+        router.replace("/dashboard")
+      } else {
+        ElMessage.error("登录失败，请重新授权")
         router.replace("/login")
       }
     })

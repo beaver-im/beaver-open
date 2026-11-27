@@ -21,6 +21,8 @@
 
 import type { AxiosError, AxiosRequestConfig } from "axios"
 import axios from "axios"
+import { clearUserInfo, readUserInfo } from "@/utils/storage"
+import type { ILoginRes } from "@/types/auth"
 
 /**
  * 统一的响应数据结构
@@ -54,7 +56,7 @@ const request = axios.create({
 request.interceptors.request.use(
   (requestConfig) => {
     // 添加token和其他公共头部
-    const token = localStorage.getItem("token") || ""
+    const token = readUserInfo<ILoginRes>()?.token || ""
 
     const headers: HeaderRequest = {
       Token: token, // 对应auth_admin.api中的Token header
@@ -69,29 +71,21 @@ request.interceptors.request.use(
   }
 )
 
+/** 认证失败：清本地登录态并跳登录页（hash 路由不能写 /login） */
+export function redirectToLogin() {
+  clearUserInfo()
+  window.location.href = `${window.location.pathname}${window.location.search}#/login`
+}
+
 /**
  * 响应拦截器
  */
 request.interceptors.response.use(
-  (response) => {
-    const data = response.data as IResponseSuccessData<any>
-
-    // 处理认证失败的情况
-    if (data.code !== 0 && response.config.url?.includes("authentication")) {
-      // 清除token并跳转到登录页
-      localStorage.removeItem("token")
-      localStorage.removeItem("userId")
-      localStorage.removeItem("phone")
-
-      // 本项目使用 hash 路由，直接写 "/login" 会跳到服务器 404
-      window.location.href = `${window.location.pathname}${window.location.search}#/login`
-
-      return Promise.reject(new Error("认证失败，请重新登录"))
-    }
-
-    return response.data
-  },
+  (response) => response.data,
   (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      redirectToLogin()
+    }
     return Promise.reject(error)
   }
 )

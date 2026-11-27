@@ -17,7 +17,7 @@
 
 - 请求拦截器注入 `Token`（来自 `localStorage.token`）与 `deviceId`（来自 `localStorage.deviceId`）；
 - 响应返回 `{ code, msg, result }` 信封；
-- `code !== 0` 且 URL 包含 `authentication` 时清理本地登录态并跳 `#/login`（hash 路由，不能直接写 `/login`）；
+- HTTP 401 时清理本地登录态并跳 `#/login`（hash 路由，不能直接写 `/login`）；
 - 网络异常以 rejected Promise 抛出，不伪装成功响应。
 
 **约束**：API 层只声明 `ajax<I...Res>({ method, url, params/data })`；调用方必须先看 `code`，失败分支不能假定 `result` 存在。未知输入先校验再收窄，不用 `as unknown as` 让不兼容契约“看起来能编译”。

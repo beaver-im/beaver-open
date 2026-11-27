@@ -27,52 +27,10 @@
 
 <script lang="ts">
 import { defineComponent, onMounted } from "vue"
-import { useRouter } from "vue-router"
-import { useUserStore } from "@/pinia/user/user"
-import { ElMessage } from "element-plus"
-
 export default defineComponent({
   name: "OAuthRedirect",
   setup() {
-    const router = useRouter()
-    const userStore = useUserStore()
 
-    onMounted(async () => {
-      // hash 路由下 code 在 # 前的 search 里
-      const searchParams = new URLSearchParams(window.location.search)
-      const code = searchParams.get("code")
-      const error = searchParams.get("error")
-
-      const clearParams = () => {
-        const url = new URL(window.location.href)
-        url.search = ""
-        window.history.replaceState({}, "", `${url.pathname}${url.hash}`)
-      }
-
-      if (error) {
-        ElMessage.error(`授权失败: ${error}`)
-        clearParams()
-        router.replace("/login")
-        return
-      }
-      if (!code) {
-        router.replace("/")
-        return
-      }
-
-      try {
-        const result = await userStore.oauthLogin({ code })
-        clearParams()
-        if (result.success) {
-          ElMessage.success("登录成功")
-          router.replace("/dashboard")
-        }
-      } catch (err: any) {
-        clearParams()
-        ElMessage.error(err?.message || "登录失败")
-        router.replace("/login")
-      }
-    })
 
     return {}
   }

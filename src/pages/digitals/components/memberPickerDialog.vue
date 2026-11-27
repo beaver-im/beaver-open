@@ -114,7 +114,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref, type PropType } from "vue"
 import { ElMessage } from "element-plus"
-import { resolveImageUrl, searchImUserApi } from "@/api/im"
+import { searchImUserApi } from "@/api/im"
 import type { ISearchImUserRes } from "@/types/api/im"
 
 interface SelectedPerson {
@@ -143,7 +143,7 @@ export default defineComponent({
     const result = ref<ISearchImUserRes | null>(null)
     const selected = ref<SelectedPerson[]>([])
 
-    const avatarUrl = computed(() => resolveImageUrl(result.value?.avatar))
+    const avatarUrl = computed(() => result.value?.avatar || "")
 
     function reset() {
       keyword.value = ""

@@ -7,8 +7,8 @@
 路径形如：
 
 ```text
-/beaver-open/api/open/developer/v1/{action}         需登录
-/beaver-open/api/open/developer_public/v1/{action}  公开
+/beaver-open/api/open/developer/v1/{action}     需登录
+/beaver-open/api/open/login_public/v1/{action}  公开（登录、OAuth 换票）
 ```
 
 `config.baseAPI` 只提供 origin，不在这里拼业务路径。服务端真相源在 `beaver-server-open` 的 `app/open/open_api`（`.api` 文件 + `internal/types`）。
