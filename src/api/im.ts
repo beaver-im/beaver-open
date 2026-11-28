@@ -19,11 +19,8 @@
  * beaver-open-header-v1
  *
  * Portal 复用的 IM 能力（用户搜索 / 头像上传 / 图片预览）。
- * 这些能力属于主站 IM，但浏览器不直连 /beaver/...：
- * 全部走开放平台 /beaver-open/api/open/{im|asset}/v1/{action}，
- * 由 open_api 内部透传/转发到主站 account / asset。
+ * 用户搜索仍走开放平台 im 契约；头像上传直接使用主站用户票调用 asset_api。
  *
- * 门户令牌和 IM 用户令牌用同一个 Auth.AccessSecret 签发，上传接口带同一条 Token 即可。
  * 目前三处：MemberPicker 选人搜索、头像上传、图片预览。
  */
 
@@ -53,7 +50,7 @@ export async function uploadImageFileApi(file: File): Promise<IUploadFileRes> {
   const form = new FormData()
   form.append("file", file)
   const token = readUserInfo<ILoginRes>()?.token || ""
-  const resp = await fetch(`${base}/beaver-open/api/open/asset/v1/file_upload`, {
+  const resp = await fetch(`${base}/beaver/api/asset/file/v1/upload`, {
     method: "POST",
     headers: token ? { Token: token } : undefined,
     body: form
