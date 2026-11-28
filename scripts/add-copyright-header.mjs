@@ -2,7 +2,7 @@
  * Copyright (c) 2024-2026 Beaver IM Team
  * SPDX-License-Identifier: MIT
  * Project: beaver-open
- * https://github.com/wsrh8888/beaver-open
+ * https://github.com/beaver-im/beaver-web-open
  *
  * 批量为 src 下 .ts / .vue / .js 添加或更新文件头版权注释（中英双语）。
  * 用法（仓库根目录）: node scripts/add-copyright-header.mjs
@@ -20,7 +20,7 @@ const srcRoot = path.join(repoRoot, 'src')
 const MARKER = 'SPDX-License-Identifier: MIT'
 const HEADER_VERSION = 'beaver-open-header-v1'
 const PROJECT = 'beaver-open'
-const REPO_URL = 'https://github.com/wsrh8888/beaver-open'
+const REPO_URL = 'https://github.com/beaver-im/beaver-web-open'
 
 const TS_HEADER = `/**
  * Copyright (c) 2024-2026 Beaver IM Team

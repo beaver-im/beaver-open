@@ -1,4 +1,4 @@
-﻿# 🦫 Beaver Open - Beaver IM Open Platform
+# 🦫 Beaver Open - Beaver IM Open Platform
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-3.0.4-blue.svg)](VERSION)
@@ -46,7 +46,7 @@
 ### Installation Steps
 ```bash
 # Clone the project
-git clone https://github.com/beaver-im/beaver-open.git
+git clone https://github.com/beaver-im/beaver-web-open.git
 cd beaver-open
 
 # Install dependencies
@@ -83,9 +83,9 @@ npm run build_test
 |---------|------------|-------------|
 | **beaver-server-package** | [GitHub](https://github.com/beaver-im) | Independent optional backend services (`ai`, `backend`, `call`, `observability`, `online`, `open`, `social`) |
 | **beaver-desktop-package** | [GitHub](https://github.com/beaver-im) | Independent optional desktop capability packs (`beaver-desktop-ai`, `beaver-desktop-online`) |
-| **beaver-manager** | [GitHub](https://github.com/beaver-im/beaver-manager) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-manager) | Admin management portal (pairs with `beaver-server-backend`) |
-| **beaver-open** | [GitHub](https://github.com/beaver-im/beaver-open) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-open) | Open platform portal (this repo, pairs with `beaver-server-open`) |
-| **beaver-oauth** | [GitHub](https://github.com/beaver-im/beaver-oauth) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-oauth) | OAuth authorization portal (pairs with `beaver-server-open`) |
+| **beaver-web-manager** | [GitHub](https://github.com/beaver-im/beaver-web-manager) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-web-manager) | Admin management portal (pairs with `beaver-server-backend`) |
+| **beaver-web-open** | [GitHub](https://github.com/beaver-im/beaver-web-open) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-web-open) | Open platform portal (this repo, pairs with `beaver-server-open`) |
+| **beaver-web-oauth** | [GitHub](https://github.com/beaver-im/beaver-web-oauth) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-web-oauth) | OAuth authorization portal (pairs with `beaver-server-open`) |
 | **beaver-sdk** | [GitHub](https://github.com/beaver-im/beaver-sdk) | OpenClaw / JS SDK (optional developer integration suite) |
 | **beaver-docs** | [GitHub](https://github.com/beaver-im/beaver-docs) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-docs) | Official documentation & deployment guides |
 
@@ -128,7 +128,7 @@ Contact: [751135385@qq.com](mailto:751135385@qq.com)
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=beaver-im/beaver-open&type=Date)](https://star-history.com/#beaver-im/beaver-open&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=beaver-im/beaver-web-open&type=Date)](https://star-history.com/#beaver-im/beaver-web-open&Date)
 
 ---
 
