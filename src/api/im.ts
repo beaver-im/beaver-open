@@ -18,17 +18,12 @@
  *
  * beaver-open-header-v1
  *
- * Portal 复用的 IM 能力（用户搜索 / 头像上传 / 图片预览）。
- * 用户搜索仍走开放平台 im 契约；头像上传直接使用主站用户票调用 asset_api。
- *
- * 目前三处：MemberPicker 选人搜索、头像上传、图片预览。
+ * Portal 复用的 IM 能力（用户搜索）。头像等上传见 api/upload.ts + utils/upload。
  */
 
 import config from "@/config/env"
-import { ajax, redirectToLogin } from "@/utils/request"
-import { readUserInfo } from "@/utils/storage"
-import type { ILoginRes } from "@/types/auth"
-import type { ISearchImUserReq, ISearchImUserRes, IUploadFileRes } from "@/types/api/im"
+import { ajax } from "@/utils/request"
+import type { ISearchImUserReq, ISearchImUserRes } from "@/types/api/im"
 
 const base = config.baseAPI
 
@@ -39,29 +34,4 @@ export function searchImUserApi(params: ISearchImUserReq) {
     url: `${base}/beaver-open/api/open/im/v1/user_search`,
     params
   })
-}
-
-/**
- * 图片上传：multipart 字段名服务端固定取 "file"。
- * 这里用 fetch 而不是封装的 ajax —— axios 实例默认 Content-Type 是 application/json，
- * 传 FormData 时容易被序列化成 JSON；fetch 交给浏览器自己带 boundary 最稳。
- */
-export async function uploadImageFileApi(file: File): Promise<IUploadFileRes> {
-  const form = new FormData()
-  form.append("file", file)
-  const token = readUserInfo<ILoginRes>()?.token || ""
-  const resp = await fetch(`${base}/beaver/api/asset/file/v1/upload`, {
-    method: "POST",
-    headers: token ? { Token: token } : undefined,
-    body: form
-  })
-  // fetch 绕过 axios 拦截器，网关 401 必须在这里自己兜住
-  if (resp.status === 401) {
-    redirectToLogin()
-    throw new Error("登录已失效，请重新登录")
-  }
-  const json = (await resp.json()) as { code: number; msg: string; result?: IUploadFileRes }
-  if (json.code !== 0) throw new Error(json.msg || "图片上传失败")
-  if (!json.result?.fileUrl) throw new Error("图片上传失败：服务端未返回文件地址")
-  return json.result
 }

@@ -20,7 +20,7 @@
  */
 
 import type { AxiosError, AxiosRequestConfig } from "axios"
-import axios from "axios"
+import axios, { AxiosHeaders } from "axios"
 import { clearUserInfo, readUserInfo } from "@/utils/storage"
 import type { ILoginRes } from "@/types/auth"
 
@@ -55,15 +55,20 @@ const request = axios.create({
  */
 request.interceptors.request.use(
   (requestConfig) => {
-    // 添加token和其他公共头部
-    const token = readUserInfo<ILoginRes>()?.token || ""
+    const headers = AxiosHeaders.from(requestConfig.headers)
+    headers.set("deviceId", localStorage.getItem("deviceId") || "")
 
-    const headers: HeaderRequest = {
-      Token: token, // 对应auth_admin.api中的Token header
-      deviceId: localStorage.getItem("deviceId") || ""
+    // 显式带 Authorization 的是第三平面上传票，不要再塞登录 Token
+    if (!headers.has("Authorization")) {
+      headers.set("Token", readUserInfo<ILoginRes>()?.token || "")
     }
 
-    requestConfig.headers = Object.assign({}, requestConfig.headers, headers)
+    // FormData 必须让浏览器自己带 multipart boundary
+    if (typeof FormData !== "undefined" && requestConfig.data instanceof FormData) {
+      headers.delete("Content-Type")
+    }
+
+    requestConfig.headers = headers
     return requestConfig
   },
   (error: Error) => {

@@ -172,7 +172,7 @@ import {
   setDigitalViewersApi,
   updateDigitalApi
 } from "@/api/digital"
-import { uploadImageFileApi } from "@/api/im"
+import { uploadFile } from "@/utils/upload"
 import FormCard from "@/pages/digitals/components/formCard.vue"
 import IdTagsEditor from "@/pages/digitals/components/idTagsEditor.vue"
 import MemberPickerDialog from "@/pages/digitals/components/memberPickerDialog.vue"
@@ -255,8 +255,8 @@ export default defineComponent({
       }
       uploadingAvatar.value = true
       try {
-        const res = await uploadImageFileApi(file)
-        draft.avatar = res.fileUrl
+        const res = await uploadFile(file)
+        draft.avatar = res.fileUrl || ""
         ElMessage.success("头像已更新，保存后生效")
       } catch (err) {
         ElMessage.error(errorMessage(err, "头像上传失败"))

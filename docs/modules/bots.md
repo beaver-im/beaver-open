@@ -30,7 +30,8 @@
 ## 9.4 改动提示
 
 - 新增字段先改 `types/api/bot.ts` 与 `api/bot.ts`，再改两个页签；不要只在模板里“取一下”。
-- 头像上传走 [api/im.ts](../../src/api/im.ts) 的 `uploadImageFileApi`，上传结果直接用 `fileUrl`，不要另接一套上传。
+- 头像上传走 [utils/upload](../../src/utils/upload/index.ts)（先代领 uploadToken，再经网关直传 asset），结果只用 `fileUrl`。
+- 已申请工号（`userId`）后，保存基础信息由 open 同步到 account；account 升 version 并推 `USER_PROFILE`，客户端按 version 更新。未申请工号只改 open 本地表。
 - 删除机器人是破坏性操作，必须 `ElMessageBox` 二次确认，并以服务端返回为准。
 - 页签导航复用 [digitals/components/tabNav.vue](../../src/pages/digitals/components/tabNav.vue)；详情页不另设标题区，发布状态与操作按钮走它的 `extra` 插槽，改导航行为时同时检查智能体与 OAuth 详情。
 

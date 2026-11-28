@@ -92,7 +92,7 @@ import { useRouter } from "vue-router"
 import { ElMessage, ElMessageBox } from "element-plus"
 import { Camera, Loading } from "@element-plus/icons-vue"
 import { deleteOAuthAppApi, updateOAuthAppApi } from "@/api/oauth"
-import { uploadImageFileApi } from "@/api/im"
+import { uploadFile } from "@/utils/upload"
 import type { IOAuthAppInfo } from "@/types/api/oauth"
 import FormCard from "@/pages/digitals/components/formCard.vue"
 
@@ -150,8 +150,8 @@ export default defineComponent({
       }
       uploadingIcon.value = true
       try {
-        const res = await uploadImageFileApi(file)
-        form.icon = res.fileUrl
+        const res = await uploadFile(file)
+        form.icon = res.fileUrl || ""
         ElMessage.success("图标已更新，保存后生效")
       } catch (err) {
         ElMessage.error(errorMessage(err, "图标上传失败"))

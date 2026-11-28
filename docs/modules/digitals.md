@@ -62,7 +62,13 @@ configDetail = {
 - 工具启用是客户端（WorkBuddy）本机能力，**不写进云端 Agent 编排**；不要再往 `configDetail.prompt` 里塞 `tools` / `mcpServerIds`。
 - MCP 注册表维护走 `digital_mcp_save` / `digital_mcp_delete`，属于开发者自建服务，不是 Agent 绑定关系。
 
-## 10.6 改动提示
+## 10.6 工号与 IM 资料
+
+- 申请工号后 `userId` 即 account 用户（`userType=digital`），与普通用户同表。
+- [settingsTab.vue](../../src/pages/digitals/detail/tabs/settingsTab.vue) 改名称/头像：上传走 [utils/upload](../../src/utils/upload/index.ts) 拿 `fileUrl`；保存时 open 写本地表，**已有工号则同步 account**，由 account 推 `USER_PROFILE`。
+- 未申请工号时只改 open 本地展示字段；申请工号时把本地名称/头像一并写入 IM 用户。
+
+## 10.7 改动提示
 
 - 改编排字段：先改 `types/api/digital.ts` 的 `IDigitalConfigDetail` 与 `workspace.ts` 的读写，再改编辑器组件，最后核对服务端 `beaver-server-open` 的 `digital_config_save` 与 AI 的 `config_detail`。
 - 改模式：同时检查 `orchestrationTab.vue` 的分支渲染、`switchMode` 的落库、`knowledgeTab` 是否仍适用（工作流模式不消费知识源）。

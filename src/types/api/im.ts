@@ -33,9 +33,3 @@ export interface ISearchImUserRes {
   email?: string
   abstract?: string
 }
-
-/** 文件上传（file 域），multipart 字段名固定为 file */
-export interface IUploadFileRes {
-  fileUrl: string
-  originalName: string
-}
