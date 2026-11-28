@@ -87,13 +87,13 @@ We welcome code contributions! Here's how to get started:
 
 1. **Clone your fork**
 ```bash
-git clone https://github.com/YOUR_USERNAME/beaver-manager.git
+git clone https://github.com/YOUR_USERNAME/beaver-web-manager.git
 cd beaver-manager
 ```
 
 2. **Add upstream remote**
 ```bash
-git remote add upstream https://github.com/wsrh8888/beaver-manager.git
+git remote add upstream https://github.com/beaver-im/beaver-web-manager.git
 ```
 
 3. **Install dependencies**
@@ -334,7 +334,7 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ## 🆘 Getting Help
 
-- **Issues**: [GitHub Issues](https://github.com/wsrh8888/beaver-manager/issues)
+- **Issues**: [GitHub Issues](https://github.com/beaver-im/beaver-web-manager/issues)
 - **Email**: [751135385@qq.com](mailto:751135385@qq.com)
 - **QQ Group**: [1013328597](https://qm.qq.com/q/82rbf7QBzO)
 

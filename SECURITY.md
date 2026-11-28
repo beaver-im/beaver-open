@@ -188,14 +188,14 @@ Please include the following information in your report:
 
 We would like to thank the security researchers and community members who have helped improve Beaver Manager's security:
 
-- [Security Hall of Fame](https://github.com/wsrh8888/beaver-manager/security/hall-of-fame)
-- [Bug Bounty Program](https://github.com/wsrh8888/beaver-manager/security/bounty)
+- [Security Hall of Fame](https://github.com/beaver-im/beaver-web-manager/security/hall-of-fame)
+- [Bug Bounty Program](https://github.com/beaver-im/beaver-web-manager/security/bounty)
 
 ## 📞 Contact Information
 
 - **Security Team**: [751135385@qq.com](mailto:751135385@qq.com)
 - **Emergency Contact**: [QQ Group](https://qm.qq.com/q/82rbf7QBzO)
-- **PGP Key**: [Security PGP Key](https://github.com/wsrh8888/beaver-manager/security/pgp-key)
+- **PGP Key**: [Security PGP Key](https://github.com/beaver-im/beaver-web-manager/security/pgp-key)
 
 ---
 

@@ -1,4 +1,4 @@
-﻿# 🦫 Beaver Open - 海狸开放平台
+# 🦫 Beaver Open - 海狸开放平台
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-3.0.4-blue.svg)](VERSION)
@@ -46,7 +46,7 @@
 ### 安装步骤
 ```bash
 # 克隆项目
-git clone https://github.com/beaver-im/beaver-open.git
+git clone https://github.com/beaver-im/beaver-web-open.git
 cd beaver-open
 
 # 安装依赖
@@ -83,9 +83,9 @@ npm run build_test
 |------|----------|------|
 | **beaver-server-package** | [GitHub](https://github.com/beaver-im) | 后端独立增值服务集合（`ai` / `backend` / `call` / `observability` / `online` / `open` / `social`） |
 | **beaver-desktop-package** | [GitHub](https://github.com/beaver-im) | 桌面端独立可选能力包集合（`beaver-desktop-ai` / `beaver-desktop-online`） |
-| **beaver-manager** | [GitHub](https://github.com/beaver-im/beaver-manager) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-manager) | 后台管理系统（配套 `beaver-server-backend`） |
-| **beaver-open** | [GitHub](https://github.com/beaver-im/beaver-open) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-open) | 开放平台门户（本仓库，配套 `beaver-server-open`） |
-| **beaver-oauth** | [GitHub](https://github.com/beaver-im/beaver-oauth) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-oauth) | OAuth 授权登录门户（配套 `beaver-server-open`） |
+| **beaver-web-manager** | [GitHub](https://github.com/beaver-im/beaver-web-manager) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-web-manager) | 后台管理系统（配套 `beaver-server-backend`） |
+| **beaver-web-open** | [GitHub](https://github.com/beaver-im/beaver-web-open) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-web-open) | 开放平台门户（本仓库，配套 `beaver-server-open`） |
+| **beaver-web-oauth** | [GitHub](https://github.com/beaver-im/beaver-web-oauth) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-web-oauth) | OAuth 授权登录门户（配套 `beaver-server-open`） |
 | **beaver-sdk** | [GitHub](https://github.com/beaver-im/beaver-sdk) | OpenClaw / JS SDK（可选开发集成套件） |
 | **beaver-docs** | [GitHub](https://github.com/beaver-im/beaver-docs) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-docs) | 官方文档与部署指南 |
 
@@ -128,7 +128,7 @@ npm run build_test
 
 ## ⭐ Star历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=beaver-im/beaver-open&type=Date)](https://star-history.com/#beaver-im/beaver-open&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=beaver-im/beaver-web-open&type=Date)](https://star-history.com/#beaver-im/beaver-web-open&Date)
 
 ---
 
