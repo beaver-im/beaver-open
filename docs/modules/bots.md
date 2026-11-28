@@ -32,6 +32,6 @@
 - 新增字段先改 `types/api/bot.ts` 与 `api/bot.ts`，再改两个页签；不要只在模板里“取一下”。
 - 头像上传走 [api/im.ts](../../src/api/im.ts) 的 `uploadImageFileApi`，上传结果直接用 `fileUrl`，不要另接一套上传。
 - 删除机器人是破坏性操作，必须 `ElMessageBox` 二次确认，并以服务端返回为准。
-- 页签导航复用 [digitals/components/tabNav.vue](../../src/pages/digitals/components/tabNav.vue)；改导航行为时同时检查智能体与 OAuth 详情。
+- 页签导航复用 [digitals/components/tabNav.vue](../../src/pages/digitals/components/tabNav.vue)；详情页不另设标题区，发布状态与操作按钮走它的 `extra` 插槽，改导航行为时同时检查智能体与 OAuth 详情。
 
 [下一章：智能体与编排](../modules/digitals.md) · [返回目录](../README.md)

@@ -37,31 +37,6 @@ a {
   text-decoration: none;
 }
 
-/* 页面标题区：面包屑只在顶栏渲染，这里不渲染、不预留位置 */
-.page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ds-space-4);
-  margin-bottom: var(--ds-space-6);
-}
-.page-header__title {
-  font-size: var(--ds-fs-20);
-  font-weight: var(--ds-weight-bold);
-  color: var(--ds-neutral-900);
-  margin-top: 0;
-}
-.page-header__desc {
-  font-size: var(--ds-fs-13);
-  color: var(--ds-neutral-600);
-  margin-top: var(--ds-space-1);
-}
-.page-header__actions {
-  display: flex;
-  gap: var(--ds-space-2);
-  flex: 0 0 auto;
-}
-
 /* 顶栏面包屑（唯一渲染位置） */
 .ds-breadcrumb {
   display: flex;
@@ -220,8 +195,6 @@ a {
 }
 
 @media (max-width: 767px) {
-  .page-header { flex-direction: column; align-items: stretch; }
-  .page-header__actions { justify-content: flex-start; }
   .panel-section { max-width: 100%; }
   .ds-breadcrumb__sep:nth-of-type(n + 4),
   .ds-breadcrumb__item:nth-of-type(n + 4) { display: none; }

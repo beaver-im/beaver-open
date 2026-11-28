@@ -4,7 +4,7 @@
 
 | 术语 | 含义 |
 | --- | --- |
-| 开发者面 / `developer` | 门户调用的网关面；路径形如 `/beaver-open/api/open/developer/v1/{action}`，需登录 |
+| 业务组 | 需登录端点的分组段，按服务端 `.api` 划分为 `auth` / `bot` / `digital` / `im` / `asset` / `oauth`；路径形如 `/beaver-open/api/open/<组>/v1/{action}` |
 | 公开面 / `login_public` | 无需登录的端点组（登录、OAuth 换票）；前端仍走统一请求封装 |
 | 推送机器人 / bot | 单向推送型机器人，有 `botId`、webhook、token/secret；`UserType=2` |
 | 智能体 / digital | 平台上配置的机器人实体，门户里也叫“数字伙伴”；三种编排方式 |

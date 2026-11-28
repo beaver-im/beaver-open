@@ -23,7 +23,7 @@
   <div class="sidebar">
     <div class="logo-container">
       <router-link to="/dashboard" class="logo-link">
-        <img class="logo-mark" :src="brandMarkIcon" alt="" aria-hidden="true">
+        <img class="logo-mark" :src="logoImage" alt="" aria-hidden="true">
         <span class="logo-text">Beaver 开放平台</span>
       </router-link>
     </div>
@@ -57,7 +57,7 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import brandMarkIcon from "@/assets/icons/brandMark.svg"
+import logoImage from "@/assets/logo.png"
 import { dashboardMenu, menuGroups } from "../../../config/menu"
 
 export default defineComponent({
@@ -77,7 +77,7 @@ export default defineComponent({
       emit("navigate")
     }
 
-    return { activeMenu, brandMarkIcon, dashboardMenu, menuGroups, handleMenuClick }
+    return { activeMenu, logoImage, dashboardMenu, menuGroups, handleMenuClick }
   }
 })
 </script>
@@ -105,9 +105,9 @@ export default defineComponent({
   }
 
   .logo-mark {
-    width: 24px;
-    height: 24px;
-    flex: 0 0 24px;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
   }
 
   .logo-text {

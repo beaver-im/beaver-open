@@ -46,7 +46,7 @@
     <LongConnectionEditor v-else-if="localMode === 'longconnect'" />
 
     <!-- 编排分区的保存入口：改动只在点击「保存」后落库，不再随输入静默提交。
-         草稿态由顶部「创建智能体」统一创建+保存，这里不重复暴露按钮。 -->
+         草稿态由分区栏「创建智能体」统一创建+保存，这里不重复暴露按钮。 -->
     <div v-if="!isNew && localMode === 'prompt'" class="orch-save">
       <span class="orch-save__hint">改动在点击保存后生效</span>
       <el-button type="primary" :loading="saving" @click="onSave">保存编排</el-button>

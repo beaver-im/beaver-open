@@ -21,18 +21,11 @@
 
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h1 class="page-header__title">智能体</h1>
-        <p class="page-header__desc">可被拉入会话的数字伙伴。创建后在同一个工作台里配置编排、知识源与工具。</p>
-      </div>
-    </div>
-
     <div class="ds-list-panel">
       <div v-loading="loading" class="digital-grid">
         <button type="button" class="digital-card digital-card--entry" @click="openCreate">
           <span class="digital-card__entry-icon">
-            <el-icon><Plus /></el-icon>
+            <img :src="createEntryIcon" alt="" aria-hidden="true">
           </span>
           <span class="digital-card__entry-title">创建智能体</span>
           <span class="digital-card__entry-desc">填名称即可，编排随时可改</span>
@@ -134,7 +127,8 @@
 import { onMounted, reactive, ref, defineComponent } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
-import { Plus, Right } from "@element-plus/icons-vue"
+import { Right } from "@element-plus/icons-vue"
+import createEntryIcon from "@/assets/icons/createEntry.svg"
 import { createDigitalApi, listDigitalsApi } from "@/api/digital"
 import type { IDigitalInfo } from "@/types/api/digital"
 import { iconColorFor, iconLetter, iconTint } from "@/pages/digitals/components/cardVisual"
@@ -230,7 +224,7 @@ export default defineComponent({
     return {
       errorMessage, router, loading, loadFailed, list, total, page, pageSize, loadList,
       goDetail, isPublished, dialogVisible, submitting, createForm, openCreate, submitCreate,
-      onMounted, reactive, ref, useRouter, ElMessage, Plus, Right, createDigitalApi,
+      onMounted, reactive, ref, useRouter, ElMessage, Right, createEntryIcon, createDigitalApi,
       listDigitalsApi, iconColorFor, iconLetter, iconTint
     }
   }
@@ -380,7 +374,11 @@ export default defineComponent({
     margin-bottom: 2px;
     border-radius: var(--ds-radius-md);
     background: var(--ds-neutral-100);
-    font-size: 18px;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
   }
 
   &__entry-title {

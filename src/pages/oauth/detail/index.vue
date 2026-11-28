@@ -24,16 +24,6 @@
 
 <template>
   <div class="ws">
-    <header class="ws-head">
-      <button class="ws-back" type="button" @click="goList">
-        <el-icon><ArrowLeft /></el-icon>返回列表
-      </button>
-
-      <div class="ws-head__row">
-        <h1 class="ws-title">{{ app?.name || (loadFailed ? "应用不可用" : "OAuth 应用") }}</h1>
-      </div>
-    </header>
-
     <TabNav :tabs="tabs" :active="active" @select="select" />
 
     <div v-if="loadFailed" class="ds-notice ds-notice--danger">
@@ -55,7 +45,6 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
-import { ArrowLeft } from "@element-plus/icons-vue"
 import { getOAuthAppDetailApi } from "@/api/oauth"
 import type { IOAuthAppInfo } from "@/types/api/oauth"
 import TabNav from "@/pages/digitals/components/tabNav.vue"
@@ -65,7 +54,7 @@ import DeveloperTab from "./tabs/developerTab.vue"
 
 export default defineComponent({
   name: "OAuthDetailPage",
-  components: { ArrowLeft, TabNav, SettingsTab, PlatformsTab, DeveloperTab },
+  components: { TabNav, SettingsTab, PlatformsTab, DeveloperTab },
   setup() {
     const route = useRoute()
     const router = useRouter()
@@ -91,8 +80,6 @@ export default defineComponent({
       if (key === active.value) return
       router.replace({ query: { ...route.query, tab: key } })
     }
-
-    const goList = () => router.push("/oauth")
 
     function errorMessage(err: unknown, fallback: string): string {
       if (err instanceof Error && err.message) return err.message
@@ -131,42 +118,7 @@ export default defineComponent({
 
     onMounted(loadDetail)
 
-    return { oauthId, loading, loadFailed, app, tabs, active, select, goList, loadDetail }
+    return { oauthId, loading, loadFailed, app, tabs, active, select, loadDetail }
   }
 })
 </script>
-
-<style lang="less" scoped>
-.ws-head { margin-bottom: var(--ds-space-4); }
-
-.ws-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ds-neutral-600);
-  font-family: inherit;
-  font-size: var(--ds-fs-13);
-  cursor: pointer;
-
-  &:hover { color: var(--ds-brand); }
-}
-
-.ws-head__row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ds-space-4);
-  margin-top: var(--ds-space-2);
-}
-
-.ws-title {
-  font-size: var(--ds-fs-20);
-  font-weight: var(--ds-weight-bold);
-  line-height: var(--ds-lh-heading);
-  color: var(--ds-neutral-900);
-  word-break: break-all;
-}
-</style>

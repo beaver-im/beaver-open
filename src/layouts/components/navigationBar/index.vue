@@ -114,6 +114,11 @@ export default defineComponent({
   background: var(--ds-neutral-0);
 }
 
+.ds-breadcrumb {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .right-menu {
   flex: 0 0 auto;
   margin-left: var(--ds-space-4);

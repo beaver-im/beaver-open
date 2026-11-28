@@ -44,7 +44,7 @@ import type {
 export function createOAuthAppApi(data: ICreateOAuthAppReq) {
   return ajax<ICreateOAuthAppRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/app_create`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_create`,
     data
   })
 }
@@ -52,7 +52,7 @@ export function createOAuthAppApi(data: ICreateOAuthAppReq) {
 export function updateOAuthAppApi(data: IUpdateOAuthAppReq) {
   return ajax<IUpdateOAuthAppRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/app_update`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_update`,
     data
   })
 }
@@ -60,7 +60,7 @@ export function updateOAuthAppApi(data: IUpdateOAuthAppReq) {
 export function deleteOAuthAppApi(data: IDeleteOAuthAppReq) {
   return ajax<IDeleteOAuthAppRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/app_delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_delete`,
     data
   })
 }
@@ -68,7 +68,7 @@ export function deleteOAuthAppApi(data: IDeleteOAuthAppReq) {
 export function getOAuthAppDetailApi(params: IGetOAuthAppDetailReq) {
   return ajax<IGetOAuthAppDetailRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/app_detail`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_detail`,
     params
   })
 }
@@ -76,7 +76,7 @@ export function getOAuthAppDetailApi(params: IGetOAuthAppDetailReq) {
 export function getOAuthAppListApi(params: IGetOAuthAppListReq) {
   return ajax<IGetOAuthAppListRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/app_list`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_list`,
     params
   })
 }
@@ -84,7 +84,7 @@ export function getOAuthAppListApi(params: IGetOAuthAppListReq) {
 export function resetOAuthSecretApi(data: IResetOAuthSecretReq) {
   return ajax<IResetOAuthSecretRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/oauth_reset_secret`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/oauth_reset_secret`,
     data
   })
 }
@@ -93,7 +93,7 @@ export function resetOAuthSecretApi(data: IResetOAuthSecretReq) {
 export function getOAuthConfigApi(params: IGetOAuthConfigReq) {
   return ajax<IGetOAuthConfigRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/oauth_config_get`,
+    url: `${config.baseAPI}/beaver-open/api/open/oauth/v1/oauth_config_get`,
     params
   })
 }
@@ -101,7 +101,7 @@ export function getOAuthConfigApi(params: IGetOAuthConfigReq) {
 export function updateOAuthConfigApi(data: IUpdateOAuthConfigReq) {
   return ajax<IUpdateOAuthConfigRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/oauth_config_update`,
+    url: `${config.baseAPI}/beaver-open/api/open/oauth/v1/oauth_config_update`,
     data
   })
 }

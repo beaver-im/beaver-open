@@ -55,7 +55,7 @@ import type {
 export function createDigitalApi(data: ICreateDigitalReq) {
   return ajax<ICreateDigitalRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_create`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_create`,
     data
   })
 }
@@ -63,7 +63,7 @@ export function createDigitalApi(data: ICreateDigitalReq) {
 export function listDigitalsApi(params: IListDigitalReq) {
   return ajax<IListDigitalRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_list`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_list`,
     params
   })
 }
@@ -71,7 +71,7 @@ export function listDigitalsApi(params: IListDigitalReq) {
 export function getDigitalDetailApi(params: IGetDigitalDetailReq) {
   return ajax<IGetDigitalDetailRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_detail`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_detail`,
     params
   })
 }
@@ -79,7 +79,7 @@ export function getDigitalDetailApi(params: IGetDigitalDetailReq) {
 export function updateDigitalApi(data: IUpdateDigitalReq) {
   return ajax<IUpdateDigitalRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_update`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_update`,
     data
   })
 }
@@ -87,7 +87,7 @@ export function updateDigitalApi(data: IUpdateDigitalReq) {
 export function resetDigitalSecretApi(data: IResetDigitalSecretReq) {
   return ajax<IResetDigitalSecretRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_reset_secret`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_reset_secret`,
     data
   })
 }
@@ -95,7 +95,7 @@ export function resetDigitalSecretApi(data: IResetDigitalSecretReq) {
 export function deleteDigitalApi(data: IDeleteDigitalReq) {
   return ajax<IDeleteDigitalRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_delete`,
     data
   })
 }
@@ -103,7 +103,7 @@ export function deleteDigitalApi(data: IDeleteDigitalReq) {
 export function setDigitalAdminsApi(data: ISetDigitalMembersReq) {
   return ajax<ISetDigitalMembersRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_set_admins`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_set_admins`,
     data
   })
 }
@@ -111,7 +111,7 @@ export function setDigitalAdminsApi(data: ISetDigitalMembersReq) {
 export function setDigitalViewersApi(data: ISetDigitalMembersReq) {
   return ajax<ISetDigitalMembersRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_set_viewers`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_set_viewers`,
     data
   })
 }
@@ -120,7 +120,7 @@ export function setDigitalViewersApi(data: ISetDigitalMembersReq) {
 export function setDigitalStatusApi(data: ISetDigitalStatusReq) {
   return ajax<ISetDigitalStatusRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_set_status`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_set_status`,
     data
   })
 }
@@ -129,7 +129,7 @@ export function setDigitalStatusApi(data: ISetDigitalStatusReq) {
 export function applyWorkIdApi(data: IApplyWorkIdReq) {
   return ajax<IApplyWorkIdRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_work_id_apply`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_work_id_apply`,
     data
   })
 }
@@ -137,7 +137,7 @@ export function applyWorkIdApi(data: IApplyWorkIdReq) {
 export function getDigitalConfigApi(params: IGetDigitalConfigReq) {
   return ajax<IGetDigitalConfigRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_config_get`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_config_get`,
     params
   })
 }
@@ -145,7 +145,7 @@ export function getDigitalConfigApi(params: IGetDigitalConfigReq) {
 export function saveDigitalConfigApi(data: ISaveDigitalConfigReq) {
   return ajax<ISaveDigitalConfigRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_config_save`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_config_save`,
     data
   })
 }
@@ -155,14 +155,14 @@ export function saveDigitalConfigApi(data: ISaveDigitalConfigReq) {
 export function listDigitalCatalogApi() {
   return ajax<IListDigitalCatalogRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_catalog`
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_catalog`
   })
 }
 
 export function saveDigitalMcpApi(data: ISaveDigitalMcpReq) {
   return ajax<ISaveDigitalMcpRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_mcp_save`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_mcp_save`,
     data
   })
 }
@@ -170,7 +170,7 @@ export function saveDigitalMcpApi(data: ISaveDigitalMcpReq) {
 export function deleteDigitalMcpApi(data: IDeleteDigitalMcpReq) {
   return ajax<IDeleteDigitalMcpRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_mcp_delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_mcp_delete`,
     data
   })
 }

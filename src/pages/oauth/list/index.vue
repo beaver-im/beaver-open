@@ -25,18 +25,11 @@
 
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h1 class="page-header__title">OAuth 登录</h1>
-        <p class="page-header__desc">给第三方应用提供海狸账号的授权登录能力。</p>
-      </div>
-    </div>
-
     <div class="ds-list-panel">
       <div v-loading="loading" class="oauth-grid">
         <button type="button" class="oauth-card oauth-card--entry" @click="openCreate">
           <span class="oauth-card__entry-icon">
-            <el-icon><Plus /></el-icon>
+            <img :src="createEntryIcon" alt="" aria-hidden="true">
           </span>
           <span class="oauth-card__entry-title">创建 OAuth 应用</span>
           <span class="oauth-card__entry-desc">填名称即可，密钥创建后生成</span>
@@ -138,7 +131,8 @@
 import { computed, defineComponent, onMounted, reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
-import { Plus, Right } from "@element-plus/icons-vue"
+import { Right } from "@element-plus/icons-vue"
+import createEntryIcon from "@/assets/icons/createEntry.svg"
 import { createOAuthAppApi, getOAuthAppListApi } from "@/api/oauth"
 import type { IOAuthAppInfo } from "@/types/api/oauth"
 import { iconColorFor, iconLetter, iconTint } from "@/pages/digitals/components/cardVisual"
@@ -228,7 +222,7 @@ export default defineComponent({
 
     return {
       loading, list, total, page, pageSize, emptyText, dialogVisible, submitting, createForm,
-      Plus, Right, iconTint, iconColorFor, iconLetter, formatDate,
+      Right, createEntryIcon, iconTint, iconColorFor, iconLetter, formatDate,
       openCreate, goDetail, loadList, submitCreate
     }
   }
@@ -294,7 +288,11 @@ export default defineComponent({
     margin-bottom: 2px;
     border-radius: var(--ds-radius-md);
     background: var(--ds-neutral-100);
-    font-size: 18px;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
   }
 
   &__entry-title {

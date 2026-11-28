@@ -2,12 +2,12 @@
 
 ## 8.1 先确认服务端契约
 
-从服务端路由/处理器确认：HTTP 方法、完整路径、字段名与响应结构。门户接口全部是 `POST`，参数放 `data`。
+从服务端路由/处理器确认：HTTP 方法、完整路径、字段名与响应结构。方法按 `.api` 声明：列表/详情多为 `GET`（参数放 `params`），写操作多为 `POST`（参数放 `data`）。
 
 路径形如：
 
 ```text
-/beaver-open/api/open/developer/v1/{action}     需登录
+/beaver-open/api/open/<组>/v1/{action}          需登录，组为 auth / bot / digital / im / asset / oauth
 /beaver-open/api/open/login_public/v1/{action}  公开（登录、OAuth 换票）
 ```
 
@@ -34,7 +34,7 @@ export interface IGetAuditSummaryRes { total: number; lastAt: string }
 export function getAuditSummaryApi(data: IGetAuditSummaryReq) {
   return ajax<IGetAuditSummaryRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/bot_audit_summary`,
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_audit_summary`,
     data
   })
 }

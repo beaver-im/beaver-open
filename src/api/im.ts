@@ -20,7 +20,7 @@
  *
  * Portal 复用的 IM 能力（用户搜索 / 头像上传 / 图片预览）。
  * 这些能力属于主站 IM，但浏览器不直连 /beaver/...：
- * 全部打开放平台 developer 面 /beaver-open/api/open/developer/v1/{action}，
+ * 全部走开放平台 /beaver-open/api/open/{im|asset}/v1/{action}，
  * 由 open_api 内部透传/转发到主站 account / asset。
  *
  * 门户令牌和 IM 用户令牌用同一个 Auth.AccessSecret 签发，上传接口带同一条 Token 即可。
@@ -39,7 +39,7 @@ const base = config.baseAPI
 export function searchImUserApi(params: ISearchImUserReq) {
   return ajax<ISearchImUserRes>({
     method: "GET",
-    url: `${base}/beaver-open/api/open/developer/v1/user_search`,
+    url: `${base}/beaver-open/api/open/im/v1/user_search`,
     params
   })
 }
@@ -53,7 +53,7 @@ export async function uploadImageFileApi(file: File): Promise<IUploadFileRes> {
   const form = new FormData()
   form.append("file", file)
   const token = readUserInfo<ILoginRes>()?.token || ""
-  const resp = await fetch(`${base}/beaver-open/api/open/developer/v1/file_upload`, {
+  const resp = await fetch(`${base}/beaver-open/api/open/asset/v1/file_upload`, {
     method: "POST",
     headers: token ? { Token: token } : undefined,
     body: form

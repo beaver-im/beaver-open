@@ -21,16 +21,6 @@
 
 <template>
   <div class="dashboard-container">
-    <div class="page-header">
-      <div>
-        <h1 class="page-header__title">控制台</h1>
-        <p class="page-header__desc">按能力管理开放平台资源，各模块彼此独立</p>
-      </div>
-      <div class="page-header__actions">
-        <el-button @click="reloadAll">刷新</el-button>
-      </div>
-    </div>
-
     <section v-for="group in groups" :key="group.title" class="overview-group">
       <h2 class="overview-group__title">{{ group.title }}</h2>
       <div class="ds-overview-grid">
@@ -152,7 +142,7 @@ export default defineComponent({
 
     onMounted(reloadAll)
 
-    return { groups, reloadAll, go }
+    return { groups, go }
   }
 })
 </script>

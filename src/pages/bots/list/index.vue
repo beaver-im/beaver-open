@@ -25,18 +25,11 @@
 
 <template>
   <div>
-    <div class="page-header">
-      <div>
-        <h1 class="page-header__title">推送机器人</h1>
-        <p class="page-header__desc">通过 Webhook 向群内单向推送通知，不能对话。</p>
-      </div>
-    </div>
-
     <div class="ds-list-panel">
       <div v-loading="loading" class="bot-grid">
         <button type="button" class="bot-card bot-card--entry" @click="openCreate">
           <span class="bot-card__entry-icon">
-            <el-icon><Plus /></el-icon>
+            <img :src="createEntryIcon" alt="" aria-hidden="true">
           </span>
           <span class="bot-card__entry-title">创建推送机器人</span>
           <span class="bot-card__entry-desc">填名称即可，接入凭据创建后生成</span>
@@ -132,7 +125,8 @@
 import { defineComponent, onMounted, reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
-import { Plus, Right } from "@element-plus/icons-vue"
+import { Right } from "@element-plus/icons-vue"
+import createEntryIcon from "@/assets/icons/createEntry.svg"
 import { createBotApi, listBotsApi } from "@/api/bot"
 import type { IBotInfo } from "@/types/api/bot"
 import { iconColorFor, iconLetter, iconTint } from "@/pages/digitals/components/cardVisual"
@@ -233,7 +227,7 @@ export default defineComponent({
 
     return {
       loading, list, total, page, pageSize, dialogVisible, submitting, createForm,
-      Plus, Right, iconTint, iconColorFor, iconLetter, formatDate, isPublished,
+      Right, createEntryIcon, iconTint, iconColorFor, iconLetter, formatDate, isPublished,
       openCreate, goDetail, loadList, submitCreate
     }
   }
@@ -299,7 +293,11 @@ export default defineComponent({
     margin-bottom: 2px;
     border-radius: var(--ds-radius-md);
     background: var(--ds-neutral-100);
-    font-size: 18px;
+
+    img {
+      width: 22px;
+      height: 22px;
+    }
   }
 
   &__entry-title {

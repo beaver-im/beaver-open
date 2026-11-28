@@ -21,30 +21,20 @@
 
 <template>
   <div class="ws">
-    <!-- 顶部：返回 + 标题 + 副标题，对齐控制台惯例，不再用步骤条 / 概览区 / 大徽标 -->
-    <header class="ws-head">
-      <button class="ws-back" type="button" @click="goList">
-        <el-icon><ArrowLeft /></el-icon>返回列表
-      </button>
-
-      <div class="ws-head__row">
-        <div class="ws-head__text">
+    <TabNav :tabs="tabs" :active="active" :disabled="disabledTabs" @select="select">
+      <!-- 草稿态：名称 + 创建；实体态：发布状态 + 发布/取消发布（未发布是草稿，只有创建者与管理员可见） -->
+      <template #extra>
+        <template v-if="isNew">
           <el-input
-            v-if="isNew"
             v-model="draft.name"
             class="ws-name-input"
             maxlength="50"
             placeholder="给智能体起个名字"
             aria-label="智能体名称"
           />
-          <h1 v-else class="ws-title">{{ digital?.name || "智能体" }}</h1>
-        </div>
-        <div v-if="isNew" class="ws-head__actions">
-          <span class="ws-draft-tag">草稿 · 未创建</span>
           <el-button type="primary" :loading="creating" @click="createNow">创建智能体</el-button>
-        </div>
-        <!-- 实体态：发布状态 + 发布/取消发布。未发布是草稿，只有创建者与管理员可见 -->
-        <div v-else class="ws-head__actions">
+        </template>
+        <template v-else-if="digital">
           <span
             class="ds-badge"
             :class="published ? 'ds-badge--success' : 'ds-badge--neutral'"
@@ -52,11 +42,9 @@
           <el-button :loading="statusSaving" @click="togglePublish">
             {{ published ? "取消发布" : "发布" }}
           </el-button>
-        </div>
-      </div>
-    </header>
-
-    <TabNav :tabs="tabs" :active="active" :disabled="disabledTabs" @select="select" />
+        </template>
+      </template>
+    </TabNav>
 
     <div v-if="loadFailed" class="ds-notice ds-notice--danger">
       无法加载该智能体，请返回列表后重试。
@@ -79,7 +67,6 @@
 import { computed, onMounted, provide, ref, watch, defineComponent } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
-import { ArrowLeft } from "@element-plus/icons-vue"
 import { createDigitalApi, getDigitalDetailApi, setDigitalStatusApi, updateDigitalApi } from "@/api/digital"
 import type { IDigitalInfo } from "@/types/api/digital"
 import TabNav from "@/pages/digitals/components/tabNav.vue"
@@ -103,7 +90,7 @@ import SettingsTab from "./tabs/settingsTab.vue"
 
 export default defineComponent({
   name: "DigitalsDetailPage",
-  components: { ArrowLeft, TabNav, OrchestrationTab, KnowledgeTab, ToolsTab, DeveloperOptionsTab, SettingsTab },
+  components: { TabNav, OrchestrationTab, KnowledgeTab, ToolsTab, DeveloperOptionsTab, SettingsTab },
   setup() {
     function errorMessage(err: unknown, fallback: string): string {
       if (err instanceof Error && err.message) return err.message
@@ -132,7 +119,7 @@ export default defineComponent({
     /**
      * 创建与修改是同一个工作台：
      * /robot/digitals/create 是草稿态，:digitalId 是实体态，共用本组件、同一组分区与同一份表单。
-     * 草稿态下任意分区点保存（或顶部「创建智能体」）都会先把实体落库，再保存当前配置，
+     * 草稿态下任意分区点保存（或分区栏「创建智能体」）都会先把实体落库，再保存当前配置，
      * 之后原地 replace 到真实 ID，用户不会跳到另一个界面。
      */
     const route = useRoute()
@@ -161,7 +148,6 @@ export default defineComponent({
     // 只有提示词编排（平台运行时）才用得到平台托管的知识源与工具；长链接接入与工作流均不开放这两个分区。
     const disabledTabs = computed<string[]>(() => (mode.value === "prompt" ? [] : ["knowledge", "tools"]))
     const ready = computed(() => isNew.value || !!digital.value)
-    const goList = () => router.push("/robot/digitals")
     const goTab = (key: string) => {
       if (key === active.value) return
       router.replace({ query: { ...route.query, tab: key } })
@@ -224,7 +210,7 @@ export default defineComponent({
       if (creating.value) return ""
       const name = draft.name.trim()
       if (name.length < 2 || name.length > 50) {
-        ElMessage.warning("请先在顶部填写智能体名称（2-50 字符）")
+        ElMessage.warning("请先填写智能体名称（2-50 字符）")
         return ""
       }
       if (!config.validate(mode.value)) return ""
@@ -367,10 +353,10 @@ export default defineComponent({
     return {
       errorMessage, useTabNav, route, router, isNew, digitalId, digital,
       draft, config, creating, loadFailed, tabs, active, select, mode, disabledTabs,
-      ready, goList, goTab, loadDetail, refresh,
+      ready, goTab, loadDetail, refresh,
       ensureCreated, saveConfig, createNow, switchMode, syncFromRoute, computed, onMounted,
       published, statusSaving, togglePublish, setDigitalStatusApi,
-      provide, ref, watch, useRoute, useRouter, ElMessage, ArrowLeft,
+      provide, ref, watch, useRoute, useRouter, ElMessage,
       createDigitalApi, getDigitalDetailApi, updateDigitalApi, TabNav, modeText, credentialFlash,
       setCredentialFlash, digitalConfig, digitalDraft, digitalWorkspaceKey, modeToRuntime,
       resetDigitalWorkspaceDraft, runtimeToMode, OrchestrationTab, KnowledgeTab, ToolsTab,
@@ -381,71 +367,8 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
-.ws-head { margin-bottom: var(--ds-space-4); }
-
-.ws-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ds-neutral-600);
-  font-family: inherit;
-  font-size: var(--ds-fs-13);
-  cursor: pointer;
-
-  &:hover { color: var(--ds-brand); }
-}
-
-.ws-head__row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ds-space-4);
-  margin-top: var(--ds-space-2);
-}
-
-.ws-head__text { min-width: 0; flex: 1 1 auto; }
-
-.ws-title {
-  font-size: var(--ds-fs-20);
-  font-weight: var(--ds-weight-bold);
-  line-height: var(--ds-lh-heading);
-  color: var(--ds-neutral-900);
-  word-break: break-all;
-}
-
+/* 草稿态的名称输入：与分区栏同高，视觉上是一条工具栏而不是标题区 */
 .ws-name-input {
-  max-width: 420px;
-
-  :deep(.el-input__wrapper) {
-    box-shadow: none;
-    padding-left: 0;
-    background: transparent;
-  }
-
-  :deep(.el-input__inner) {
-    font-size: var(--ds-fs-20);
-    font-weight: var(--ds-weight-bold);
-    color: var(--ds-neutral-900);
-  }
-}
-
-.ws-head__actions {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-  gap: var(--ds-space-3);
-}
-
-.ws-draft-tag {
-  font-size: var(--ds-fs-12);
-  color: var(--ds-neutral-500);
-}
-
-@media (max-width: 767px) {
-  .ws-head__row { flex-direction: column; align-items: stretch; }
-  .ws-head__actions { justify-content: flex-start; }
+  width: 220px;
 }
 </style>

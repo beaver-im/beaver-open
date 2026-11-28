@@ -31,7 +31,7 @@
 
 ## 11.2 接口
 
-全部在 [api/knowledge.ts](../../src/api/knowledge.ts)，路径前缀 `/beaver-open/api/open/developer/v1/`：
+全部在 [api/knowledge.ts](../../src/api/knowledge.ts)，路径前缀 `/beaver-open/api/open/digital/v1/`：
 
 - 知识源：`knowledge_source_list`、`knowledge_source_save`、`knowledge_source_detail`、`knowledge_source_delete`。
 - 文档：`knowledge_source_doc_list`、`knowledge_source_doc_check`、`knowledge_source_doc_upload`、`knowledge_source_doc_import`、`knowledge_source_doc_delete`。

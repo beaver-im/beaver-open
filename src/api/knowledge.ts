@@ -51,7 +51,7 @@ import type {
 export function listKnowledgeSourceApi(params: IListKnowledgeSourceReq) {
   return ajax<IListKnowledgeSourceRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_list`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_list`,
     params
   })
 }
@@ -60,7 +60,7 @@ export function listKnowledgeSourceApi(params: IListKnowledgeSourceReq) {
 export function saveKnowledgeSourceApi(data: ISaveKnowledgeSourceReq) {
   return ajax<ISaveKnowledgeSourceRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_save`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_save`,
     data
   })
 }
@@ -68,7 +68,7 @@ export function saveKnowledgeSourceApi(data: ISaveKnowledgeSourceReq) {
 export function deleteKnowledgeSourceApi(data: IDeleteKnowledgeSourceReq) {
   return ajax<{}>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_delete`,
     data
   })
 }
@@ -77,7 +77,7 @@ export function deleteKnowledgeSourceApi(data: IDeleteKnowledgeSourceReq) {
 export function detailKnowledgeSourceApi(params: IDetailKnowledgeSourceReq) {
   return ajax<IDetailKnowledgeSourceRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_detail`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_detail`,
     params
   })
 }
@@ -86,7 +86,7 @@ export function detailKnowledgeSourceApi(params: IDetailKnowledgeSourceReq) {
 export function checkKnowledgeSourceDocApi(data: ICheckKnowledgeSourceDocReq) {
   return ajax<ICheckKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_check`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_doc_check`,
     data
   })
 }
@@ -95,7 +95,7 @@ export function checkKnowledgeSourceDocApi(data: ICheckKnowledgeSourceDocReq) {
 export function uploadKnowledgeSourceDocApi(data: IUploadKnowledgeSourceDocReq) {
   return ajax<IUploadKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_upload`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_doc_upload`,
     data
   })
 }
@@ -104,7 +104,7 @@ export function uploadKnowledgeSourceDocApi(data: IUploadKnowledgeSourceDocReq) 
 export function listKnowledgeSourceDocApi(params: IListKnowledgeSourceDocReq) {
   return ajax<IListKnowledgeSourceDocRes>({
     method: "GET",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_list`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_doc_list`,
     params
   })
 }
@@ -113,7 +113,7 @@ export function listKnowledgeSourceDocApi(params: IListKnowledgeSourceDocReq) {
 export function importKnowledgeSourceDocApi(data: IImportKnowledgeSourceDocReq) {
   return ajax<IImportKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_import`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_doc_import`,
     data
   })
 }
@@ -122,7 +122,7 @@ export function importKnowledgeSourceDocApi(data: IImportKnowledgeSourceDocReq) 
 export function deleteKnowledgeSourceDocApi(data: IDeleteKnowledgeSourceDocReq) {
   return ajax<IDeleteKnowledgeSourceDocRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_doc_delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_doc_delete`,
     data
   })
 }
@@ -131,7 +131,7 @@ export function deleteKnowledgeSourceDocApi(data: IDeleteKnowledgeSourceDocReq) 
 export function retrieveKnowledgeSourceApi(data: IRetrieveKnowledgeSourceReq) {
   return ajax<IRetrieveKnowledgeSourceRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/knowledge_source_retrieve`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/knowledge_source_retrieve`,
     data
   })
 }

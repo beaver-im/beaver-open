@@ -31,13 +31,13 @@ export interface IGetSummaryRes { title: string; itemCount: number }
 export function getSummaryApi(params: IGetSummaryReq) {
   return ajax<IGetSummaryRes>({
     method: "POST",
-    url: `${config.baseAPI}/beaver-open/api/open/developer/v1/digital_summary`,
+    url: `${config.baseAPI}/beaver-open/api/open/digital/v1/digital_summary`,
     data: params
   })
 }
 ```
 
-`config.baseAPI` 只含网关 origin；完整业务路径写在每个 API 的 `url` 中，来源见 [src/config/env.ts](../../src/config/env.ts)。门户接口全部是 `POST`，查询条件也走 `data`。
+`config.baseAPI` 只含网关 origin；完整业务路径写在每个 API 的 `url` 中，来源见 [src/config/env.ts](../../src/config/env.ts)。HTTP 方法与参数位置按服务端 `.api` 声明，不统一假定为 `POST`。
 
 ## 3.3 编排与外部配置的契约
 

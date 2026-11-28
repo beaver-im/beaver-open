@@ -25,27 +25,18 @@
 
 <template>
   <div class="ws">
-    <header class="ws-head">
-      <button class="ws-back" type="button" @click="goList">
-        <el-icon><ArrowLeft /></el-icon>返回列表
-      </button>
-
-      <div class="ws-head__row">
-        <h1 class="ws-title">{{ bot?.name || (loadFailed ? "机器人不可用" : "推送机器人") }}</h1>
-        <!-- 实体态：发布状态 + 发布/取消发布。未发布是草稿，IM 侧不可用 -->
-        <div v-if="bot" class="ws-head__actions">
-          <span
-            class="ds-badge"
-            :class="published ? 'ds-badge--success' : 'ds-badge--neutral'"
-          >{{ published ? "已发布" : "未发布" }}</span>
-          <el-button :loading="statusSaving" @click="togglePublish">
-            {{ published ? "取消发布" : "发布" }}
-          </el-button>
-        </div>
-      </div>
-    </header>
-
-    <TabNav :tabs="tabs" :active="active" @select="select" />
+    <TabNav :tabs="tabs" :active="active" @select="select">
+      <!-- 实体态：发布状态 + 发布/取消发布。未发布是草稿，IM 侧不可用 -->
+      <template v-if="bot" #extra>
+        <span
+          class="ds-badge"
+          :class="published ? 'ds-badge--success' : 'ds-badge--neutral'"
+        >{{ published ? "已发布" : "未发布" }}</span>
+        <el-button :loading="statusSaving" @click="togglePublish">
+          {{ published ? "取消发布" : "发布" }}
+        </el-button>
+      </template>
+    </TabNav>
 
     <div v-if="loadFailed" class="ds-notice ds-notice--danger">
       无法加载该机器人，请返回列表后重试。
@@ -65,7 +56,6 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { ElMessage } from "element-plus"
-import { ArrowLeft } from "@element-plus/icons-vue"
 import { getBotDetailApi, setBotStatusApi } from "@/api/bot"
 import type { IBotInfo } from "@/types/api/bot"
 import TabNav from "@/pages/digitals/components/tabNav.vue"
@@ -74,7 +64,7 @@ import DeveloperTab from "./tabs/developerTab.vue"
 
 export default defineComponent({
   name: "BotsDetailPage",
-  components: { ArrowLeft, TabNav, SettingsTab, DeveloperTab },
+  components: { TabNav, SettingsTab, DeveloperTab },
   setup() {
     const route = useRoute()
     const router = useRouter()
@@ -99,8 +89,6 @@ export default defineComponent({
       if (key === active.value) return
       router.replace({ query: { ...route.query, tab: key } })
     }
-
-    const goList = () => router.push("/robot/bots")
 
     /* ============ 发布 / 取消发布 ============
      * status：1 已发布 / 2 未发布。新建机器人默认未发布（草稿），
@@ -162,51 +150,9 @@ export default defineComponent({
     onMounted(loadDetail)
 
     return {
-      botId, loading, loadFailed, bot, tabs, active, select, goList,
+      botId, loading, loadFailed, bot, tabs, active, select,
       published, statusSaving, togglePublish, loadDetail
     }
   }
 })
 </script>
-
-<style lang="less" scoped>
-.ws-head { margin-bottom: var(--ds-space-4); }
-
-.ws-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ds-neutral-600);
-  font-family: inherit;
-  font-size: var(--ds-fs-13);
-  cursor: pointer;
-
-  &:hover { color: var(--ds-brand); }
-}
-
-.ws-head__row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ds-space-4);
-  margin-top: var(--ds-space-2);
-}
-
-.ws-head__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-3);
-  flex: 0 0 auto;
-}
-
-.ws-title {
-  font-size: var(--ds-fs-20);
-  font-weight: var(--ds-weight-bold);
-  line-height: var(--ds-lh-heading);
-  color: var(--ds-neutral-900);
-  word-break: break-all;
-}
-</style>

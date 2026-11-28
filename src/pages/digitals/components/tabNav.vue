@@ -21,19 +21,26 @@
 
 <template>
   <nav class="ds-tabbar" aria-label="详情分区">
-    <button
-      v-for="tab in tabs"
-      :key="tab.key"
-      class="ds-tabbar__item"
-      :class="{ 'is-active': tab.key === active, 'is-disabled': isDisabled(tab.key) }"
-      type="button"
-      :disabled="isDisabled(tab.key)"
-      :aria-current="tab.key === active ? 'page' : undefined"
-      :title="isDisabled(tab.key) ? '当前编排方式不支持此分区' : undefined"
-      @click="!isDisabled(tab.key) && emit('select', tab.key)"
-    >
-      {{ tab.label }}
-    </button>
+    <div class="ds-tabbar__list">
+      <button
+        v-for="tab in tabs"
+        :key="tab.key"
+        class="ds-tabbar__item"
+        :class="{ 'is-active': tab.key === active, 'is-disabled': isDisabled(tab.key) }"
+        type="button"
+        :disabled="isDisabled(tab.key)"
+        :aria-current="tab.key === active ? 'page' : undefined"
+        :title="isDisabled(tab.key) ? '当前编排方式不支持此分区' : undefined"
+        @click="!isDisabled(tab.key) && emit('select', tab.key)"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <!-- 分区右侧的操作区（发布状态、发布按钮等），由页面按需填充 -->
+    <div v-if="$slots.extra" class="ds-tabbar__extra">
+      <slot name="extra" />
+    </div>
   </nav>
 </template>
 
@@ -70,11 +77,27 @@ export default defineComponent({
   height: 44px;
   margin-bottom: var(--ds-space-5);
   border-bottom: 1px solid var(--ds-border);
+}
+
+.ds-tabbar__list {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-5);
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
   overflow-x: auto;
   scrollbar-width: none;
 }
 
-.ds-tabbar::-webkit-scrollbar { display: none; }
+.ds-tabbar__list::-webkit-scrollbar { display: none; }
+
+.ds-tabbar__extra {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  flex: 0 0 auto;
+}
 
 .ds-tabbar__item {
   position: relative;
