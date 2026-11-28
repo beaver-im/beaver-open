@@ -22,63 +22,105 @@
 import config from "@/config/env"
 import { ajax } from "@/utils/request"
 import type {
-  IGetBotConfigReq,
-  IGetBotConfigRes,
-  IUpdateBotConfigReq,
-  IUpdateBotConfigRes,
-  ICreateIncomingWebhookReq,
-  ICreateIncomingWebhookRes,
-  IListIncomingWebhooksReq,
-  IListIncomingWebhooksRes,
-  IDeleteIncomingWebhookReq,
-  IDeleteIncomingWebhookRes
+  ICreateBotReq,
+  ICreateBotRes,
+  IListBotReq,
+  IListBotRes,
+  IGetBotDetailReq,
+  IGetBotDetailRes,
+  IApplyBotWorkIdReq,
+  IApplyBotWorkIdRes,
+  ISetBotStatusReq,
+  ISetBotStatusRes,
+  IUpdateBotReq,
+  IUpdateBotRes,
+  IDeleteBotReq,
+  IDeleteBotRes,
+  IResetBotSecretReq,
+  IResetBotSecretRes,
+  ISetBotMembersReq,
+  ISetBotMembersRes
 } from "@/types/api/bot"
 
-// ==================== Bot 机器人配置 ====================
-
-// 获取 Bot 配置
-export function getBotConfigApi(params: IGetBotConfigReq) {
-  return ajax<IGetBotConfigRes>({
-    method: "GET",
-    url: `${config.baseAPI}/api/open_portal/bot/v1/config`,
-    params
-  })
-}
-
-// 更新 Bot 配置
-export function updateBotConfigApi(data: IUpdateBotConfigReq) {
-  return ajax<IUpdateBotConfigRes>({
+// 群通知机器人（服务端 api/bot_developer.api）
+export function createBotApi(data: ICreateBotReq) {
+  return ajax<ICreateBotRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/bot/v1/config_update`,
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_create`,
     data
   })
 }
 
-// ==================== Incoming Webhook 管理 ====================
-
-// 创建 Incoming Webhook
-export function createIncomingWebhookApi(data: ICreateIncomingWebhookReq) {
-  return ajax<ICreateIncomingWebhookRes>({
-    method: "POST",
-    url: `${config.baseAPI}/api/open_portal/bot/v1/incoming_create`,
-    data
-  })
-}
-
-// 获取 Incoming Webhook 列表
-export function listIncomingWebhooksApi(params: IListIncomingWebhooksReq) {
-  return ajax<IListIncomingWebhooksRes>({
+export function listBotsApi(params: IListBotReq) {
+  return ajax<IListBotRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/bot/v1/incoming_list`,
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_list`,
     params
   })
 }
 
-// 删除 Incoming Webhook
-export function deleteIncomingWebhookApi(data: IDeleteIncomingWebhookReq) {
-  return ajax<IDeleteIncomingWebhookRes>({
+export function getBotDetailApi(params: IGetBotDetailReq) {
+  return ajax<IGetBotDetailRes>({
+    method: "GET",
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_detail`,
+    params
+  })
+}
+
+export function updateBotApi(data: IUpdateBotReq) {
+  return ajax<IUpdateBotRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/bot/v1/incoming_delete`,
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_update`,
+    data
+  })
+}
+
+/** 手动申请工号（创建 IM 用户，幂等） */
+export function applyBotWorkIdApi(data: IApplyBotWorkIdReq) {
+  return ajax<IApplyBotWorkIdRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_work_id_apply`,
+    data
+  })
+}
+
+/** 发布 / 取消发布：status 1 已发布 2 未发布 */
+export function setBotStatusApi(data: ISetBotStatusReq) {
+  return ajax<ISetBotStatusRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_set_status`,
+    data
+  })
+}
+
+export function deleteBotApi(data: IDeleteBotReq) {
+  return ajax<IDeleteBotRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_delete`,
+    data
+  })
+}
+
+export function resetBotSecretApi(data: IResetBotSecretReq) {
+  return ajax<IResetBotSecretRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_reset_secret`,
+    data
+  })
+}
+
+export function setBotAdminsApi(data: ISetBotMembersReq) {
+  return ajax<ISetBotMembersRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_set_admins`,
+    data
+  })
+}
+
+export function setBotViewersApi(data: ISetBotMembersReq) {
+  return ajax<ISetBotMembersRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/bot/v1/bot_set_viewers`,
     data
   })
 }

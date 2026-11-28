@@ -1,0 +1,374 @@
+<!--
+  Copyright (c) 2024-2026 Beaver IM Team
+  SPDX-License-Identifier: MIT
+  Project: beaver-open
+  https://github.com/wsrh8888/beaver-open
+
+  中文：
+  本文件为海狸 IM（Beaver IM）开源项目源代码。
+  版权所有 © 2024-2026 Beaver IM Team，基于 MIT 协议授权。
+  禁止删除、篡改或替换本文件头部版权与许可声明。
+  使用与商业授权说明：https://wsrh8888.github.io/beaver-docs/community/license.html
+
+  English:
+  This file is part of the Beaver IM open-source project.
+  Copyright (c) 2024-2026 Beaver IM Team. Licensed under the MIT License.
+  Do not remove, alter, or replace this copyright and license header.
+  Usage & commercial licensing: https://wsrh8888.github.io/beaver-docs/community/license.html
+
+  beaver-open-header-v1
+-->
+
+<template>
+  <div class="ws">
+    <TabNav :tabs="tabs" :active="active" :disabled="disabledTabs" @select="select">
+      <!-- 草稿态：名称 + 创建；实体态：发布状态 + 发布/取消发布（未发布是草稿，只有创建者与管理员可见） -->
+      <template #extra>
+        <template v-if="isNew">
+          <el-input
+            v-model="draft.name"
+            class="ws-name-input"
+            maxlength="50"
+            placeholder="给智能体起个名字"
+            aria-label="智能体名称"
+          />
+          <el-button type="primary" :loading="creating" @click="createNow">创建智能体</el-button>
+        </template>
+        <template v-else-if="digital">
+          <span
+            class="ds-badge"
+            :class="published ? 'ds-badge--success' : 'ds-badge--neutral'"
+          >{{ published ? "已发布" : "未发布" }}</span>
+          <el-button :loading="statusSaving" @click="togglePublish">
+            {{ published ? "取消发布" : "发布" }}
+          </el-button>
+        </template>
+      </template>
+    </TabNav>
+
+    <div v-if="loadFailed" class="ds-notice ds-notice--danger">
+      无法加载该智能体，请返回列表后重试。
+    </div>
+
+    <template v-else-if="ready">
+      <!-- :key 随实体变化，强制重建分区，避免复用时残留上一个实体的局部表单状态 -->
+      <div :key="digitalId || 'new'" v-loading="config.loading.value">
+        <OrchestrationTab v-if="active === 'orchestration'" />
+        <KnowledgeTab v-else-if="active === 'knowledge'" />
+        <ToolsTab v-else-if="active === 'tools'" />
+        <SettingsTab v-else-if="active === 'settings'" />
+        <DeveloperOptionsTab v-else-if="active === 'developer'" />
+      </div>
+    </template>
+  </div>
+</template>
+
+<script lang="ts">
+import { computed, onMounted, provide, ref, watch, defineComponent } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { ElMessage } from "element-plus"
+import { createDigitalApi, getDigitalDetailApi, setDigitalStatusApi, updateDigitalApi } from "@/api/digital"
+import type { IDigitalInfo } from "@/types/api/digital"
+import TabNav from "@/pages/digitals/components/tabNav.vue"
+import { modeText } from "@/pages/digitals/detail/constants"
+import { credentialFlash, setCredentialFlash } from "./credentialFlash"
+import {
+  digitalConfig,
+  digitalDraft,
+  digitalWorkspaceKey,
+  modeToRuntime,
+  resetDigitalWorkspaceDraft,
+  runtimeToMode,
+  type DigitalMode,
+  type DigitalWorkspace
+} from "./workspace"
+import OrchestrationTab from "./tabs/orchestrationTab.vue"
+import KnowledgeTab from "./tabs/knowledgeTab.vue"
+import ToolsTab from "./tabs/toolsTab.vue"
+import DeveloperOptionsTab from "./tabs/developerOptionsTab.vue"
+import SettingsTab from "./tabs/settingsTab.vue"
+
+export default defineComponent({
+  name: "DigitalsDetailPage",
+  components: { TabNav, OrchestrationTab, KnowledgeTab, ToolsTab, DeveloperOptionsTab, SettingsTab },
+  setup() {
+    function errorMessage(err: unknown, fallback: string): string {
+      if (err instanceof Error && err.message) return err.message
+      if (err && typeof err === "object" && "msg" in err) {
+        return String((err as { msg?: string }).msg || fallback)
+      }
+      return fallback
+    }
+
+    /** 分区与 URL ?tab= 双向同步：刷新、分享、浏览器后退都停在同一分区。本页自己用，不抽公共 composable。 */
+    function useTabNav(tabs: { key: string; label: string }[], defaultKey?: string) {
+      const tabRoute = useRoute()
+      const tabRouter = useRouter()
+      const fallback = defaultKey || tabs[0]?.key || ""
+      const active = computed(() => {
+        const queryTab = String(tabRoute.query.tab || "")
+        return tabs.some(item => item.key === queryTab) ? queryTab : fallback
+      })
+      const select = (key: string) => {
+        if (key === active.value) return
+        tabRouter.replace({ query: { ...tabRoute.query, tab: key } })
+      }
+      return { active, select }
+    }
+
+    /**
+     * 创建与修改是同一个工作台：
+     * /robot/digitals/create 是草稿态，:digitalId 是实体态，共用本组件、同一组分区与同一份表单。
+     * 草稿态下任意分区点保存（或分区栏「创建智能体」）都会先把实体落库，再保存当前配置，
+     * 之后原地 replace 到真实 ID，用户不会跳到另一个界面。
+     */
+    const route = useRoute()
+    const router = useRouter()
+
+    const isNew = computed(() => route.meta.isNew === true || route.path.endsWith("/create"))
+    const digitalId = computed(() => (isNew.value ? "" : String(route.params.digitalId || "")))
+    const digital = ref<IDigitalInfo | null>(null)
+    const draft = digitalDraft
+    const config = digitalConfig
+    const creating = ref(false)
+    const loadFailed = ref(false)
+
+    const tabs = [
+      { key: "orchestration", label: "编排" },
+      { key: "knowledge", label: "知识源" },
+      { key: "tools", label: "工具" },
+      { key: "settings", label: "设置" },
+      { key: "developer", label: "开发者选项" }
+    ]
+    const { active, select } = useTabNav(tabs, "orchestration")
+
+    const mode = computed<DigitalMode>(() =>
+      isNew.value ? draft.mode : runtimeToMode(String(digital.value?.runtime ?? ""))
+    )
+    // 只有提示词编排（平台运行时）才用得到平台托管的知识源与工具；长链接接入与工作流均不开放这两个分区。
+    const disabledTabs = computed<string[]>(() => (mode.value === "prompt" ? [] : ["knowledge", "tools"]))
+    const ready = computed(() => isNew.value || !!digital.value)
+    const goTab = (key: string) => {
+      if (key === active.value) return
+      router.replace({ query: { ...route.query, tab: key } })
+    }
+
+    /* ============ 发布 / 取消发布 ============
+     * status：1 已发布 / 2 未发布。新建智能体默认未发布（草稿），
+     * 编排配好后再由用户手动发布；未发布时外接侧换不到 token、按 ID 也取不到身份。
+     */
+    const published = computed(() => digital.value?.status === 1)
+    const statusSaving = ref(false)
+    const togglePublish = async () => {
+      const id = digitalId.value
+      if (!id) return
+      const next = published.value ? 2 : 1
+      statusSaving.value = true
+      try {
+        await setDigitalStatusApi({ digitalId: id, status: next })
+        if (digital.value) digital.value.status = next
+        ElMessage.success(next === 1 ? "已发布" : "已取消发布")
+      } catch (err) {
+        ElMessage.error(errorMessage(err, "操作失败"))
+      } finally {
+        statusSaving.value = false
+      }
+    }
+
+    const loadDetail = async (id: string) => {
+      if (!id) {
+        digital.value = null
+        return
+      }
+      loadFailed.value = false
+      try {
+        const res = await getDigitalDetailApi({ digitalId: id })
+        const info = res?.result?.digital
+        if (!info) throw new Error("智能体不存在")
+        digital.value = info
+        // 基础信息在两种形态下都编辑同一份 draft，避免两处表单各写一遍
+        draft.name = info.name
+        draft.description = info.description || ""
+        draft.avatar = info.avatar || ""
+        draft.visibility = info.visibility || "private"
+        draft.mode = runtimeToMode(String(info.runtime))
+        route.meta.entityName = info.name
+      } catch (err) {
+        loadFailed.value = true
+        ElMessage.error(errorMessage(err, "加载智能体详情失败"))
+      }
+    }
+
+    const refresh = () => loadDetail(digitalId.value)
+
+    /**
+     * 草稿态 → 实体态：先校验、创建、把已编辑的编排配置一并落库，再换 URL。
+     * 列表页的「创建智能体」直接建好实体进这里，草稿态只在直接访问 /create 时才会走到。
+     */
+    const ensureCreated = async (): Promise<string> => {
+      if (digitalId.value) return digitalId.value
+      if (creating.value) return ""
+      const name = draft.name.trim()
+      if (name.length < 2 || name.length > 50) {
+        ElMessage.warning("请先填写智能体名称（2-50 字符）")
+        return ""
+      }
+      if (!config.validate(mode.value)) return ""
+
+      creating.value = true
+      try {
+        const runtime = modeToRuntime(mode.value)
+        const res = await createDigitalApi({
+          name,
+          description: draft.description.trim() || undefined,
+          avatar: draft.avatar.trim() || undefined,
+          runtime,
+          visibility: draft.visibility
+        })
+        if (res.code !== 0) throw new Error(res.msg || "创建失败")
+        const id = res.result?.digitalId ?? ""
+        if (!id) throw new Error("创建失败：未返回 digitalId")
+
+        // 草稿里已经填过的编排内容随创建一起保存，不丢编辑
+        await config.save(id, mode.value)
+        if (runtime === "external") {
+          setCredentialFlash(id, {
+            digitalKey: res.result?.digitalKey ?? "",
+            digitalSecret: res.result?.digitalSecret ?? "",
+            reason: "create"
+          })
+        }
+        await router.replace({ path: `/robot/digitals/${id}`, query: { ...route.query, tab: active.value } })
+        ElMessage.success("智能体已创建")
+        return id
+      } catch (err) {
+        ElMessage.error(errorMessage(err, "创建失败"))
+        return ""
+      } finally {
+        creating.value = false
+      }
+    }
+
+    /** 各分区统一走这里：草稿态先创建（创建时已保存配置），实体态直接整份提交。 */
+    const saveConfig = async (): Promise<boolean> => {
+      const existed = !!digitalId.value
+      const id = await ensureCreated()
+      if (!id) return false
+      if (!existed) return true
+      const ok = await config.save(id, mode.value)
+      if (ok) ElMessage.success("已保存")
+      return ok
+    }
+
+    const createNow = async () => {
+      const id = await ensureCreated()
+      // 长链接模式创建完立刻把一次性凭据摆到用户面前，避免离开页面后丢失
+      if (id && credentialFlash.digitalId === id) goTab("developer")
+    }
+
+    /**
+     * 切换编排方式：服务端 UpdateDigital 接受 runtime，随时可换。
+     * 切换不动已有配置列——三种 runtime 各占一列互不覆盖，切回去内容还在。
+     */
+    const switchMode = async (next: DigitalMode): Promise<boolean> => {
+      if (next === mode.value) return true
+      if (isNew.value) {
+        draft.mode = next
+        return true
+      }
+      const id = digitalId.value
+      if (!id) return false
+      try {
+        const res = await updateDigitalApi({ digitalId: id, runtime: modeToRuntime(next) })
+        if (res.code !== 0) throw new Error(res.msg || "切换失败")
+        await loadDetail(id)
+        // 回读一次确认已落库：不确认就等于「界面切了、数据没切」
+        if (mode.value !== next) throw new Error("编排方式未能保存")
+        // 切到长链接且此前没有凭据时，服务端补发一把明文，必须当场展示
+        if (res.result?.digitalSecret) {
+          setCredentialFlash(id, {
+            digitalKey: res.result.digitalKey ?? "",
+            digitalSecret: res.result.digitalSecret,
+            reason: "create"
+          })
+          goTab("developer")
+        }
+        ElMessage.success(`已切换为${modeText(next)}`)
+        return true
+      } catch (err) {
+        ElMessage.error(errorMessage(err, "切换编排方式失败"))
+        return false
+      }
+    }
+
+    const syncFromRoute = async () => {
+      route.meta.entityName = undefined
+      if (isNew.value) {
+        // 弹窗创建时已把名称/描述写进 draft 并跳到 /create，这里不要再清空，否则白填。
+        if (!digitalDraft.name && !digitalDraft.description) {
+          resetDigitalWorkspaceDraft()
+        }
+        loadFailed.value = false
+        return
+      }
+      const id = digitalId.value
+      if (!id) {
+        loadFailed.value = true
+        return
+      }
+      await loadDetail(id)
+      // 刚创建完的实体，本地配置已经与服务端一致，不要重新拉取把草稿内容冲掉
+      if (config.loadedId.value !== id) await config.load(id)
+    }
+
+    onMounted(syncFromRoute)
+
+    watch(digitalId, (id, previous) => {
+      if (id !== previous) void syncFromRoute()
+    })
+
+    // 从详情页再点「创建智能体」时组件可能被复用，onMounted 不会重跑
+    watch(isNew, value => {
+      if (value) void syncFromRoute()
+    })
+
+    // 编排方式切到非提示词时，知识源/工具会被禁用；若正停在这两个分区，自动退回编排。
+    watch(mode, () => {
+      if (disabledTabs.value.includes(active.value)) goTab("orchestration")
+    })
+
+    provide(digitalWorkspaceKey, {
+      isNew,
+      digitalId,
+      digital,
+      draft,
+      mode,
+      config,
+      ensureCreated,
+      saveConfig,
+      switchMode,
+      refresh,
+      goTab
+    } satisfies DigitalWorkspace)
+    return {
+      errorMessage, useTabNav, route, router, isNew, digitalId, digital,
+      draft, config, creating, loadFailed, tabs, active, select, mode, disabledTabs,
+      ready, goTab, loadDetail, refresh,
+      ensureCreated, saveConfig, createNow, switchMode, syncFromRoute, computed, onMounted,
+      published, statusSaving, togglePublish, setDigitalStatusApi,
+      provide, ref, watch, useRoute, useRouter, ElMessage,
+      createDigitalApi, getDigitalDetailApi, updateDigitalApi, TabNav, modeText, credentialFlash,
+      setCredentialFlash, digitalConfig, digitalDraft, digitalWorkspaceKey, modeToRuntime,
+      resetDigitalWorkspaceDraft, runtimeToMode, OrchestrationTab, KnowledgeTab, ToolsTab,
+      DeveloperOptionsTab, SettingsTab
+    }
+  }
+})
+</script>
+
+<style lang="less" scoped>
+/* 草稿态的名称输入：与分区栏同高，视觉上是一条工具栏而不是标题区 */
+.ws-name-input {
+  width: 220px;
+}
+</style>

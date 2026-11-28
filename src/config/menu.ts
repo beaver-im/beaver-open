@@ -20,27 +20,47 @@
  */
 
 import HouseIcon from "@/assets/icons/house.svg"
-import GridIcon from "@/assets/icons/grid.svg"
+import KeyIcon from "@/assets/icons/key.svg"
+import ChatIcon from "@/assets/icons/chat.svg"
 
 export interface MenuItem {
   path: string
   title: string
-  icon?: string // SVG 图标路径
-  children?: MenuItem[]
+  icon?: string
 }
 
-export const menuConfig: MenuItem[] = [
-  // 🏠 控制台首页
-  {
-    path: "/console/dashboard",
-    title: "控制台",
-    icon: HouseIcon
-  },
+export interface MenuGroup {
+  title: string
+  icon?: string
+  items: MenuItem[]
+}
 
-  // 💼 我的应用（子菜单动态生成）
+// 控制台首页是独立入口，不属于任何能力分组
+export const dashboardMenu: MenuItem = {
+  path: "/dashboard",
+  title: "控制台",
+  icon: HouseIcon
+}
+
+// 一级 = 业务板块，二级 = 板块下的独立模块，路径层级与菜单层级一致。
+// 身份与接入 = OAuth 登录(/oauth)；机器人 = 推送机器人(/robot/bots) + 智能体(/robot/digitals)。
+// 两个模块在 src/pages 下各有独立目录，整目录可拆成独立应用。
+// 智能体详情里的「知识源」是数字伙伴的子实体（open_knowledge_source 表），
+// 不是一级路由，因此没有独立菜单项。
+// agent 是独立运行时（app/agent、platform/agent_apps），门户只通过数字伙伴编排配置引用它，
+// 没有门户 CRUD 接口，因此不单列菜单。
+export const menuGroups: MenuGroup[] = [
   {
-    path: "/console/apps",
-    title: "我的应用",
-    icon: GridIcon
+    title: "身份与接入",
+    icon: KeyIcon,
+    items: [{ path: "/oauth", title: "OAuth 登录" }]
+  },
+  {
+    title: "机器人能力",
+    icon: ChatIcon,
+    items: [
+      { path: "/robot/bots", title: "推送机器人" },
+      { path: "/robot/digitals", title: "智能体" }
+    ]
   }
 ]

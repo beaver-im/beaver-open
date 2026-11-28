@@ -20,7 +20,9 @@
  */
 
 import type { AxiosError, AxiosRequestConfig } from "axios"
-import axios from "axios"
+import axios, { AxiosHeaders } from "axios"
+import { clearUserInfo, readUserInfo } from "@/utils/storage"
+import type { ILoginRes } from "@/types/auth"
 
 /**
  * 统一的响应数据结构
@@ -53,15 +55,20 @@ const request = axios.create({
  */
 request.interceptors.request.use(
   (requestConfig) => {
-    // 添加token和其他公共头部
-    const token = localStorage.getItem("token") || ""
+    const headers = AxiosHeaders.from(requestConfig.headers)
+    headers.set("deviceId", localStorage.getItem("deviceId") || "")
 
-    const headers: HeaderRequest = {
-      Token: token, // 对应auth_admin.api中的Token header
-      deviceId: localStorage.getItem("deviceId") || ""
+    // 显式带 Authorization 的是第三平面上传票，不要再塞登录 Token
+    if (!headers.has("Authorization")) {
+      headers.set("Token", readUserInfo<ILoginRes>()?.token || "")
     }
 
-    requestConfig.headers = Object.assign({}, requestConfig.headers, headers)
+    // FormData 必须让浏览器自己带 multipart boundary
+    if (typeof FormData !== "undefined" && requestConfig.data instanceof FormData) {
+      headers.delete("Content-Type")
+    }
+
+    requestConfig.headers = headers
     return requestConfig
   },
   (error: Error) => {
@@ -69,29 +76,21 @@ request.interceptors.request.use(
   }
 )
 
+/** 认证失败：清本地登录态并跳登录页（hash 路由不能写 /login） */
+export function redirectToLogin() {
+  clearUserInfo()
+  window.location.href = `${window.location.pathname}${window.location.search}#/login`
+}
+
 /**
  * 响应拦截器
  */
 request.interceptors.response.use(
-  (response) => {
-    const data = response.data as IResponseSuccessData<any>
-
-    // 处理认证失败的情况
-    if (data.code !== 0 && response.config.url?.includes("authentication")) {
-      // 清除token并跳转到登录页
-      localStorage.removeItem("token")
-      localStorage.removeItem("userId")
-      localStorage.removeItem("phone")
-
-      // 可以在这里添加路由跳转逻辑
-      window.location.href = "/login"
-
-      return Promise.reject(new Error("认证失败，请重新登录"))
-    }
-
-    return response.data
-  },
+  (response) => response.data,
   (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      redirectToLogin()
+    }
     return Promise.reject(error)
   }
 )

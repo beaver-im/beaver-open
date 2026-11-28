@@ -29,8 +29,7 @@
 import zhCn from "element-plus/es/locale/lang/zh-cn"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/pinia/user/user"
-import { parseOAuthCallbackParams } from "@/utils/oauthCallback"
-import { handleOAuthCallback } from "@/utils/handleOAuthCallback"
+import { ElMessage } from "element-plus"
 
 export default defineComponent({
   setup() {
@@ -38,12 +37,34 @@ export default defineComponent({
     const userStore = useUserStore()
 
     onMounted(async () => {
-      userStore.initUserInfo()
-
       // hash 路由下 OAuth 回调的 code 在 # 前的 search 里，任意页面都可能收到
-      const params = parseOAuthCallbackParams()
-      if (params.code || params.error) {
-        await handleOAuthCallback(params, router)
+      const searchParams = new URLSearchParams(window.location.search)
+      const code = searchParams.get("code")
+      const error = searchParams.get("error")
+      if (!code && !error) return
+
+      const clearParams = () => {
+        const url = new URL(window.location.href)
+        url.search = ""
+        window.history.replaceState({}, "", `${url.pathname}${url.hash}`)
+      }
+
+      if (error) {
+        ElMessage.error(`授权失败: ${error}`)
+        clearParams()
+        router.replace("/login")
+        return
+      }
+      if (!code) return
+
+      const success = await userStore.oauthLogin({ code })
+      clearParams()
+      if (success) {
+        ElMessage.success("登录成功")
+        router.replace("/dashboard")
+      } else {
+        ElMessage.error("登录失败，请重新授权")
+        router.replace("/login")
       }
     })
 
@@ -55,8 +76,5 @@ export default defineComponent({
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-}
+/* 全局 reset 统一在 styles/global.css，此处不再重复声明，避免抹掉组件默认间距 */
 </style>

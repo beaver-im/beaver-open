@@ -1,0 +1,60 @@
+{
+  "rootScripts": [
+    "dev",
+    "serve_prod",
+    "serve_test",
+    "build_prod",
+    "build_test",
+    "lint",
+    "prepare",
+    "add-copyright-header"
+  ],
+  "packageScripts": {},
+  "requiredPaths": [
+    "AGENTS.md",
+    "docs/README.md",
+    "docs/architecture.md",
+    "docs/directory.md",
+    "docs/glossary.md",
+    "docs/workflow.md",
+    "docs/knowledge-checks.json",
+    "scripts/check-knowledge.mjs",
+    "src/App.vue",
+    "src/main.ts",
+    "src/router/index.ts",
+    "src/utils/request/index.ts",
+    "src/api/readme.md",
+    "src/api/digital.ts",
+    "src/types/api/digital.ts",
+    "src/pages/digitals/detail/workspace.ts",
+    "src/pages/digitals/detail/tabs/orchestrationTab.vue",
+    "src/pages/digitals/knowledgeSource/index.vue",
+    "src/pages/bots/list/index.vue",
+    "src/pages/oauth/list/index.vue",
+    "src/layouts/components/navigationBar/index.vue",
+    "src/layouts/components/sidebar/index.vue"
+  ],
+  "ruleFiles": [
+    "src/api/readme.md"
+  ],
+  "chapters": [
+    "architecture.md",
+    "standards/01-boundaries-and-naming.md",
+    "standards/02-types-and-api.md",
+    "standards/03-vue-and-state.md",
+    "standards/04-auth-and-routing.md",
+    "standards/05-errors-and-resources.md",
+    "how-to/01-add-page.md",
+    "how-to/02-add-api.md",
+    "modules/bots.md",
+    "modules/digitals.md",
+    "modules/knowledgeSource.md",
+    "modules/oauth-and-console.md",
+    "workflow.md",
+    "decisions/README.md",
+    "tasks/README.md"
+  ],
+  "namingExceptions": [
+    "src/App.vue"
+  ]
+}

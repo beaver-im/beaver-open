@@ -143,5 +143,23 @@ export class SessionStorage {
   }
 }
 
-// 为了保持向后兼容，导出一个简单的storage对象
-export const storage = LocalStorage
+/** 登录态在 localStorage 的唯一载体：整体一个对象，读写各一处 */
+const USER_INFO_KEY = "userInfo"
+
+export function readUserInfo<T = any>(): T | null {
+  try {
+    const raw = localStorage.getItem(USER_INFO_KEY)
+    return raw ? (JSON.parse(raw) as T) : null
+  } catch {
+    return null
+  }
+}
+
+export function writeUserInfo(userInfo: unknown): void {
+  localStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo))
+}
+
+export function clearUserInfo(): void {
+  localStorage.removeItem(USER_INFO_KEY)
+}
+

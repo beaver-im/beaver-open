@@ -1,15 +1,17 @@
 ﻿# 🦫 Beaver Open - 海狸开放平台
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.0.2-blue.svg)](VERSION)
+[![Version](https://img.shields.io/badge/version-3.0.4-blue.svg)](VERSION)
 [![Vue](https://img.shields.io/badge/Vue-3.x-brightgreen.svg)](https://vuejs.org/)
 [![Element Plus](https://img.shields.io/badge/Element%20Plus-2.x-blue.svg)](https://element-plus.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![QQ群](https://img.shields.io/badge/QQ群-1013328597%2B-blue.svg)](https://qm.qq.com/q/82rbf7QBzO)
 
-> 🚀 **海狸 IM 开放平台门户** - 基于 Vue 3 + Element Plus + TypeScript 构建，为第三方开发者提供应用管理、API 接入与 Webhook 配置
+> 🚀 **海狸 IM 开放平台门户** - 基于 Vue 3 + Element Plus + TypeScript 构建的可选开发者门户，配合后端开放平台拓展服务（`beaver-server-open`）为第三方开发者提供应用管理、API 接入与 Webhook 配置能力
 
-**当前版本：[2.0.2](VERSION)**（以仓库根目录 [`VERSION`](VERSION) 文件为准，与 `package.json` 同步）
+> 💡 **架构定位说明**：`beaver-server` 与核心客户端（`beaver-flutter` / `beaver-desktop`）自身即可构成完整的 IM 基础闭环；本仓库属于配套开放平台的可选开发者门户，不部署本仓库与开放平台扩展服务，核心即时通讯仍可独立正常运行。
+
+**当前版本：[3.0.4](VERSION)**（以仓库根目录 [`VERSION`](VERSION) 文件为准，与 `package.json` 同步）
 
 [English](README_EN.md) | [中文](README.md)
 
@@ -44,7 +46,7 @@
 ### 安装步骤
 ```bash
 # 克隆项目
-git clone https://github.com/wsrh8888/beaver-open.git
+git clone https://github.com/beaver-im/beaver-open.git
 cd beaver-open
 
 # 安装依赖
@@ -67,14 +69,25 @@ npm run build_test
 
 ## 🔗 相关项目
 
+### 核心闭环（可独立完成即时通讯）
+
 | 项目 | 仓库地址 | 说明 |
 |------|----------|------|
-| **beaver-server** | [GitHub](https://github.com/wsrh8888/beaver-server) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-server) | 后端微服务 |
-| **beaver-flutter** | [GitHub](https://github.com/wsrh8888/beaver-flutter) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-flutter) | 移动端（Flutter，推荐） |
-| **beaver-desktop** | [GitHub](https://github.com/wsrh8888/beaver-desktop) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-desktop) | 桌面端（Electron） |
-| **beaver-manager** | [GitHub](https://github.com/wsrh8888/beaver-manager) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-manager) | 后台管理系统 |
-| **beaver-open** | [GitHub](https://github.com/wsrh8888/beaver-open) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-open) | 开放平台（本仓库） |
-| **beaver-oauth** | [GitHub](https://github.com/wsrh8888/beaver-oauth) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-oauth) | OAuth 授权登录 |
+| **beaver-server** | [GitHub](https://github.com/beaver-im/beaver-server) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-server) | 核心后端微服务（可独立运行完整 IM 闭环） |
+| **beaver-flutter** | [GitHub](https://github.com/beaver-im/beaver-flutter) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-flutter) | 核心移动端（Flutter，推荐） |
+| **beaver-desktop** | [GitHub](https://github.com/beaver-im/beaver-desktop) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-desktop) | 核心桌面端（Electron） |
+
+### 可选增值服务与生态组件（按需部署，不影响核心 IM）
+
+| 项目 | 仓库地址 | 说明 |
+|------|----------|------|
+| **beaver-server-package** | [GitHub](https://github.com/beaver-im) | 后端独立增值服务集合（`ai` / `backend` / `call` / `observability` / `online` / `open` / `social`） |
+| **beaver-desktop-package** | [GitHub](https://github.com/beaver-im) | 桌面端独立可选能力包集合（`beaver-desktop-ai` / `beaver-desktop-online`） |
+| **beaver-manager** | [GitHub](https://github.com/beaver-im/beaver-manager) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-manager) | 后台管理系统（配套 `beaver-server-backend`） |
+| **beaver-open** | [GitHub](https://github.com/beaver-im/beaver-open) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-open) | 开放平台门户（本仓库，配套 `beaver-server-open`） |
+| **beaver-oauth** | [GitHub](https://github.com/beaver-im/beaver-oauth) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-oauth) | OAuth 授权登录门户（配套 `beaver-server-open`） |
+| **beaver-sdk** | [GitHub](https://github.com/beaver-im/beaver-sdk) | OpenClaw / JS SDK（可选开发集成套件） |
+| **beaver-docs** | [GitHub](https://github.com/beaver-im/beaver-docs) \| [Gitee](https://gitee.com/dawwdadfrf/beaver-docs) | 官方文档与部署指南 |
 
 ## 📚 文档与帮助
 
@@ -115,7 +128,7 @@ npm run build_test
 
 ## ⭐ Star历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wsrh8888/beaver-open&type=Date)](https://star-history.com/#wsrh8888/beaver-open&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=beaver-im/beaver-open&type=Date)](https://star-history.com/#beaver-im/beaver-open&Date)
 
 ---
 

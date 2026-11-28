@@ -19,87 +19,97 @@
  * beaver-open-header-v1
  */
 
-// ==================== Bot 机器人配置 ====================
+// 群通知机器人：一级实体，对应服务端 open_bot 表。
+// Token 与签名密钥仅存哈希，明文只在创建 / 重置时返回一次，详情接口不返回。
 
-export interface IBotConfigInfo {
-  appId: string
-  botName: string
-  botAvatar: string
-  botDescription: string
-  usageGuide: string // 使用说明
-  enableSingleChat: boolean
-  enableGroupChat: boolean
-  enableAtMention: boolean
-  enableMenu: boolean // 是否启用自定义菜单
-  menuItems: string // JSON 字符串，菜单项配置
-  autoReplyRules: string[]
-  commands: string[]
-  status: number
-}
+export type BotVisibility = "private" | "partial" | "public"
 
-export interface IGetBotConfigReq {
-  appId: string
-}
-
-export interface IGetBotConfigRes {
-  config: IBotConfigInfo
-}
-
-export interface IUpdateBotConfigReq {
-  appId: string
-  botName?: string
-  botAvatar?: string
-  botDescription?: string
-  usageGuide?: string // 使用说明
-  enableSingleChat?: boolean
-  enableGroupChat?: boolean
-  enableAtMention?: boolean
-  enableMenu?: boolean // 是否启用自定义菜单
-  menuItems?: string // JSON 字符串，菜单项配置
-  autoReplyRules?: string[]
-  commands?: string[]
-  status?: number
-}
-
-export interface IUpdateBotConfigRes {}
-
-// ==================== Incoming Webhook 管理 ====================
-
-export interface IIncomingWebhookInfo {
-  id: string
-  token: string
-  appId: string
-  groupId: string
-  botUserId: string
+export interface IBotInfo {
+  botId: string
+  /** IM 工号 B100000；空/缺省 = 未申请。加好友、拉群用的是这个，不是 botId */
+  userId?: string
   name: string
-  webhookUrl: string
+  avatar?: string
+  description?: string
+  visibility: BotVisibility
+  /** 1 已发布 / 2 未发布。新建默认未发布（草稿），发布后才对 IM 侧生效 */
   status: number
+  webhookUrl: string
+  adminIds?: string[]
+  viewerIds?: string[]
   createdAt: number
 }
 
-export interface ICreateIncomingWebhookReq {
-  appId: string
-  groupId: string
-  name?: string
+export interface ICreateBotReq {
+  name: string
+  description?: string
+  avatar?: string
+  visibility?: BotVisibility
+}
+export interface ICreateBotRes {
+  botId: string
+  webhookUrl: string
+  token: string
+  secret: string
 }
 
-export interface ICreateIncomingWebhookRes {
-  webhook: IIncomingWebhookInfo
-}
-
-export interface IListIncomingWebhooksReq {
-  appId: string
+export interface IListBotReq {
   page?: number
   pageSize?: number
 }
-
-export interface IListIncomingWebhooksRes {
+export interface IListBotRes {
   total: number
-  list: IIncomingWebhookInfo[]
+  list: IBotInfo[]
 }
 
-export interface IDeleteIncomingWebhookReq {
-  id: string
+export interface IGetBotDetailReq {
+  botId: string
+}
+export interface IGetBotDetailRes {
+  bot: IBotInfo
 }
 
-export interface IDeleteIncomingWebhookRes {}
+/** 手动申请工号（创建 IM 用户），幂等：已申请直接返回现有工号 */
+export interface IApplyBotWorkIdReq {
+  botId: string
+}
+export interface IApplyBotWorkIdRes {
+  botId: string
+  userId: string
+}
+
+/** 发布 / 取消发布：status 1 已发布 2 未发布 */
+export interface ISetBotStatusReq {
+  botId: string
+  status: number
+}
+export interface ISetBotStatusRes {
+  status: number
+}
+
+export interface IUpdateBotReq {
+  botId: string
+  name?: string
+  avatar?: string
+  description?: string
+  visibility?: BotVisibility
+}
+export interface IUpdateBotRes {}
+
+export interface IDeleteBotReq {
+  botId: string
+}
+export interface IDeleteBotRes {}
+
+export interface IResetBotSecretReq {
+  botId: string
+}
+export interface IResetBotSecretRes {
+  secret: string
+}
+
+export interface ISetBotMembersReq {
+  botId: string
+  userIds: string[]
+}
+export interface ISetBotMembersRes {}

@@ -22,29 +22,86 @@
 import config from "@/config/env"
 import { ajax } from "@/utils/request"
 import type {
+  ICreateOAuthAppReq,
+  ICreateOAuthAppRes,
+  IUpdateOAuthAppReq,
+  IUpdateOAuthAppRes,
+  IDeleteOAuthAppReq,
+  IDeleteOAuthAppRes,
+  IGetOAuthAppDetailReq,
+  IGetOAuthAppDetailRes,
+  IGetOAuthAppListReq,
+  IGetOAuthAppListRes,
+  IResetOAuthSecretReq,
+  IResetOAuthSecretRes,
   IGetOAuthConfigReq,
   IGetOAuthConfigRes,
-  IUpdateOAuthConfigReq
+  IUpdateOAuthConfigReq,
+  IUpdateOAuthConfigRes
 } from "@/types/api/oauth"
 
-/**
- * 获取 OAuth 配置
- */
-export function getOAuthConfigApi(params: IGetOAuthConfigReq) {
-  return ajax<IGetOAuthConfigRes>({
+// OAuth 应用管理（服务端 api/app_developer.api，操作 open_oauth 表）
+export function createOAuthAppApi(data: ICreateOAuthAppReq) {
+  return ajax<ICreateOAuthAppRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_create`,
+    data
+  })
+}
+
+export function updateOAuthAppApi(data: IUpdateOAuthAppReq) {
+  return ajax<IUpdateOAuthAppRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_update`,
+    data
+  })
+}
+
+export function deleteOAuthAppApi(data: IDeleteOAuthAppReq) {
+  return ajax<IDeleteOAuthAppRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_delete`,
+    data
+  })
+}
+
+export function getOAuthAppDetailApi(params: IGetOAuthAppDetailReq) {
+  return ajax<IGetOAuthAppDetailRes>({
     method: "GET",
-    url: `${config.baseAPI}/api/open_portal/oauth/v1/config`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_detail`,
     params
   })
 }
 
-/**
- * 更新 OAuth 配置
- */
-export function updateOAuthConfigApi(data: IUpdateOAuthConfigReq) {
-  return ajax({
+export function getOAuthAppListApi(params: IGetOAuthAppListReq) {
+  return ajax<IGetOAuthAppListRes>({
+    method: "GET",
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/app_list`,
+    params
+  })
+}
+
+export function resetOAuthSecretApi(data: IResetOAuthSecretReq) {
+  return ajax<IResetOAuthSecretRes>({
     method: "POST",
-    url: `${config.baseAPI}/api/open_portal/oauth/v1/config_update`,
+    url: `${config.baseAPI}/beaver-open/api/open/auth/v1/oauth_reset_secret`,
+    data
+  })
+}
+
+// OAuth 端配置（服务端 api/oauth_developer.api）
+export function getOAuthConfigApi(params: IGetOAuthConfigReq) {
+  return ajax<IGetOAuthConfigRes>({
+    method: "GET",
+    url: `${config.baseAPI}/beaver-open/api/open/oauth/v1/oauth_config_get`,
+    params
+  })
+}
+
+export function updateOAuthConfigApi(data: IUpdateOAuthConfigReq) {
+  return ajax<IUpdateOAuthConfigRes>({
+    method: "POST",
+    url: `${config.baseAPI}/beaver-open/api/open/oauth/v1/oauth_config_update`,
     data
   })
 }
